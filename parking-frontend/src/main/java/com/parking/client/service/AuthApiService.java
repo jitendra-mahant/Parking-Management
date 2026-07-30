@@ -1,9 +1,9 @@
 package com.parking.client.service;
 
+import java.io.IOException;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
-import java.io.IOException;
 
 public class AuthApiService {
 
@@ -58,5 +58,25 @@ public class AuthApiService {
             this.email = email;
             this.role = role;
         }
+    }
+
+    public static String forgotPassword(String email) throws IOException {
+        JsonObject requestBody = new JsonObject();
+        requestBody.addProperty("email", email);
+        return ApiClient.post("/auth/forgot-password", gson.toJson(requestBody));
+    }
+
+    public static String verifyOtp(String email, String otp) throws IOException {
+        JsonObject requestBody = new JsonObject();
+        requestBody.addProperty("email", email);
+        requestBody.addProperty("otp", otp);
+        return ApiClient.post("/auth/verify-otp", gson.toJson(requestBody));
+    }
+
+    public static String resetPassword(String email, String newPassword) throws IOException {
+        JsonObject requestBody = new JsonObject();
+        requestBody.addProperty("email", email);
+        requestBody.addProperty("newPassword", newPassword);
+        return ApiClient.post("/auth/reset-password", gson.toJson(requestBody));
     }
 }

@@ -21,6 +21,8 @@
     <Label text="Password"/>
     <PasswordField fx:id="passwordField" promptText="Enter your password" maxWidth="250"/>
 
+    <Label text="Forgot Password?" style="-fx-text-fill: blue; -fx-underline: true;" onMouseClicked="#goToForgotPassword"/>
+
     <Label fx:id="errorLabel" style="-fx-text-fill: red;" text=""/>
 
     <Button text="Login" onAction="#handleLogin"/>

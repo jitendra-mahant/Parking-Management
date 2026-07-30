@@ -63,4 +63,13 @@ public class LoginController {
             errorLabel.setText("Signup screen not ready yet");
         }
     }
+
+    @FXML
+    private void goToForgotPassword() {
+        try {
+            MainApp.switchScene("/fxml/forgot_password.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Forgot password screen not available");
+        }
+    }
 }

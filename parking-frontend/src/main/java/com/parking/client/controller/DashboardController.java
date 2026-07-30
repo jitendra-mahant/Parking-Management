@@ -33,4 +33,13 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void goToProfile() {
+        try {
+            MainApp.switchScene("/fxml/profile.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
