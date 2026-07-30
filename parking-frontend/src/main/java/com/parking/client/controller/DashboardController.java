@@ -42,4 +42,13 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void goToVehicles() {
+        try {
+            MainApp.switchScene("/fxml/vehicles.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

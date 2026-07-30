@@ -74,4 +74,20 @@ public class ApiClient {
             builder.addHeader("Authorization", "Bearer " + token);
         }
     }
+
+    public static String delete(String endpoint) throws IOException {
+        Request.Builder builder = new Request.Builder()
+                .url(BASE_URL + endpoint)
+                .delete();
+
+        addAuthHeader(builder);
+
+        try (Response response = client.newCall(builder.build()).execute()) {
+            String responseBody = response.body() != null ? response.body().string() : "";
+            if (!response.isSuccessful()) {
+                throw new IOException(responseBody.isEmpty() ? "Request failed: " + response.code() : responseBody);
+            }
+            return responseBody;
+        }
+    }
 }
