@@ -4,6 +4,7 @@ import com.parking.client.MainApp;
 import com.parking.client.service.AuthApiService;
 import com.parking.client.util.SessionManager;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -38,17 +39,22 @@ public class LoginController {
 
                 SessionManager.setSession(result.token, result.name, result.email, result.role);
 
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     try {
-                        // For now, all roles go to a generic dashboard - we'll split by role next
-                        MainApp.switchScene("/fxml/dashboard.fxml");
+                        if (result.role.equals("staff")) {
+                            MainApp.switchScene("/fxml/staff_dashboard.fxml");
+                        } else if (result.role.equals("admin")) {
+                            MainApp.switchScene("/fxml/admin_dashboard.fxml");
+                        } else {
+                            MainApp.switchScene("/fxml/dashboard.fxml");
+                        }
                     } catch (Exception e) {
-                        errorLabel.setText("Login succeeded but dashboard not ready yet");
+                        errorLabel.setText("Login succeeded but dashboard failed to load: " + e.getMessage());
                     }
                 });
 
             } catch (Exception e) {
-                javafx.application.Platform.runLater(() ->
+                Platform.runLater(() ->
                         errorLabel.setText("Login failed: " + e.getMessage())
                 );
             }

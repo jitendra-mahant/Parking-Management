@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" spacing="12" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.parking.client.controller.StaffDashboardController">
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <Label fx:id="welcomeLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Staff Dashboard"/>
+
+    <Label text="Vehicle Entry" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+    <TextField fx:id="entryVehicleNumberField" promptText="Vehicle Number" maxWidth="250"/>
+    <ComboBox fx:id="entryVehicleTypeCombo" promptText="Vehicle Type" maxWidth="250"/>
+    <Button text="Record Entry" onAction="#handleRecordEntry"/>
+
+    <Label fx:id="entryStatusLabel" text=""/>
+
+    <Separator/>
+
+    <Label text="Active Bookings" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+    <ListView fx:id="activeBookingsListView" prefHeight="180" prefWidth="450"/>
+    <Button text="Record Exit for Selected" onAction="#handleRecordExit"/>
+    <Button text="Refresh Active Bookings" onAction="#loadActiveBookings"/>
+
+    <Label fx:id="exitStatusLabel" text=""/>
+
+    <Separator/>
+
+    <Label text="All Slots Status" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+    <ListView fx:id="slotsListView" prefHeight="150" prefWidth="450"/>
+    <Button text="Refresh Slots" onAction="#loadSlots"/>
+
+    <Button text="Logout" onAction="#handleLogout"/>
+</VBox>

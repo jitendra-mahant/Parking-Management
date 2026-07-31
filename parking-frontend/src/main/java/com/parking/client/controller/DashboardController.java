@@ -51,4 +51,22 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void goToBookSlot() {
+        try {
+            MainApp.switchScene("/fxml/book_slot.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void goToMyBookings() {
+        try {
+            MainApp.switchScene("/fxml/my_bookings.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
