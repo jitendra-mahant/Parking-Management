@@ -12,12 +12,8 @@
     </padding>
 
     <Label fx:id="welcomeLabel" style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Welcome!"/>
-    <Label fx:id="roleLabel" style="-fx-font-size: 14px; -fx-text-fill: gray;" text=""/>
-
-    <Button text="My Profile" onAction="#goToProfile"/>
     <Button text="My Vehicles" onAction="#goToVehicles"/>
-    <Button text="Book Parking Slot" onAction="#goToBookSlot"/>
-    <Button text="My Bookings" onAction="#goToMyBookings"/>
+    <Label fx:id="roleLabel" style="-fx-font-size: 14px; -fx-text-fill: gray;" text=""/>
 
     <Button text="Logout" onAction="#handleLogout"/>
 </VBox>
