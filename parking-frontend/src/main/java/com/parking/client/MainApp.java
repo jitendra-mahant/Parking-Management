@@ -14,6 +14,8 @@ public class MainApp extends Application {
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         primaryStage.setTitle("Parking Management System");
+        primaryStage.setMinWidth(500);
+        primaryStage.setMinHeight(600);
 
         switchScene("/fxml/login.fxml");
 
@@ -25,6 +27,7 @@ public class MainApp extends Application {
         FXMLLoader loader = new FXMLLoader(MainApp.class.getResource(fxmlPath));
         Parent root = loader.load();
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(MainApp.class.getResource("/css/styles.css").toExternalForm());
         primaryStage.setScene(scene);
     }
 

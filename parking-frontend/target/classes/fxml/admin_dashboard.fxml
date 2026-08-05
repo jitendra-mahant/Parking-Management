@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" spacing="10" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="com.parking.client.controller.AdminDashboardController">
+    <padding>
+        <Insets top="30" right="40" bottom="30" left="40"/>
+    </padding>
+
+    <Label fx:id="welcomeLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Admin Dashboard"/>
+
+    <Label text="Revenue Overview" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+    <Label fx:id="revenueLabel" text="Loading..."/>
+    <Button text="Refresh Report" onAction="#loadRevenue"/>
+
+    <Separator/>
+
+    <Label text="Manage Staff" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+    <TextField fx:id="staffNameField" promptText="Name" maxWidth="250"/>
+    <TextField fx:id="staffEmailField" promptText="Email" maxWidth="250"/>
+    <PasswordField fx:id="staffPasswordField" promptText="Password" maxWidth="250"/>
+    <TextField fx:id="staffPhoneField" promptText="Phone" maxWidth="250"/>
+    <Button text="Add Staff" onAction="#handleAddStaff"/>
+    <Label fx:id="staffStatusLabel" text=""/>
+
+    <ListView fx:id="staffListView" prefHeight="120" prefWidth="450"/>
+    <Button text="Remove Selected Staff" onAction="#handleRemoveStaff"/>
+
+    <Separator/>
+
+    <Label text="All Bookings" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+    <ListView fx:id="bookingsListView" prefHeight="150" prefWidth="450"/>
+    <Button text="Refresh Bookings" onAction="#loadBookings"/>
+
+    <Button text="Logout" onAction="#handleLogout"/>
+</VBox>

@@ -1,0 +1,55 @@
+.root {
+    -fx-background-color: #f4f6f8;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+.label {
+    -fx-text-fill: #2c3e50;
+}
+
+.button {
+    -fx-background-color: #2f6fed;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 20 8 20;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #1e56c9;
+}
+
+.button:pressed {
+    -fx-background-color: #16409e;
+}
+
+.text-field, .password-field, .combo-box, .list-view {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #d0d5dc;
+    -fx-border-width: 1;
+    -fx-padding: 6;
+    -fx-background-color: white;
+}
+
+.text-field:focused, .password-field:focused, .combo-box:focused {
+    -fx-border-color: #2f6fed;
+}
+
+.list-view {
+    -fx-padding: 4;
+}
+
+.list-cell {
+    -fx-padding: 8;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #dbe7ff;
+    -fx-text-fill: #1e3a8a;
+}
+
+.separator .line {
+    -fx-border-color: #d0d5dc;
+}
