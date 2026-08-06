@@ -53,3 +53,51 @@
 .separator .line {
     -fx-border-color: #d0d5dc;
 }
+/* Role-based header banners */
+.header-bar {
+    -fx-padding: 14 20 14 20;
+    -fx-background-radius: 8;
+    -fx-alignment: center;
+}
+
+.header-bar .label {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.customer-header {
+    -fx-background-color: #2f6fed; /* blue */
+}
+
+.staff-header {
+    -fx-background-color: #e67e22; /* orange */
+}
+
+.admin-header {
+    -fx-background-color: #8e44ad; /* purple */
+}
+
+/* Role-based buttons to match the theme */
+.customer-header ~ .button, .customer-btn {
+    -fx-background-color: #2f6fed;
+}
+
+.staff-btn {
+    -fx-background-color: #e67e22;
+}
+.staff-btn:hover {
+    -fx-background-color: #c8690f;
+}
+
+.admin-btn {
+    -fx-background-color: #8e44ad;
+}
+.admin-btn:hover {
+    -fx-background-color: #6f3585;
+}
+.sidebar-btn-staff-active {
+    -fx-background-color: #e67e22;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}

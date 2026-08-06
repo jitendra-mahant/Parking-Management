@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
@@ -15,7 +16,9 @@
         <Insets top="30" right="40" bottom="30" left="40"/>
     </padding>
 
-    <Label fx:id="welcomeLabel" style="-fx-font-size: 20px; -fx-font-weight: bold;" text="Admin Dashboard"/>
+    <HBox styleClass="header-bar, admin-header" alignment="CENTER" maxWidth="Infinity">
+    <Label fx:id="welcomeLabel" text="Admin Dashboard"/>
+</HBox>
 
     <Label text="Revenue Overview" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
     <Label fx:id="revenueLabel" text="Loading..."/>
@@ -40,5 +43,5 @@
     <ListView fx:id="bookingsListView" prefHeight="150" prefWidth="450"/>
     <Button text="Refresh Bookings" onAction="#loadBookings"/>
 
-    <Button text="Logout" onAction="#handleLogout"/>
+    <Button text="Logout" onAction="#handleLogout" styleClass="admin-btn"/>
 </VBox>

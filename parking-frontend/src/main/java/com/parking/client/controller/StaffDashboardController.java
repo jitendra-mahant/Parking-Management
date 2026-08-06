@@ -145,4 +145,13 @@ public class StaffDashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void goToDashboard() {
+        try {
+            MainApp.switchScene("/fxml/staff_dashboard.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
