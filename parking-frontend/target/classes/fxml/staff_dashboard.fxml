@@ -8,6 +8,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
@@ -29,6 +31,36 @@
 
             <Label fx:id="welcomeLabel" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Staff Dashboard"/>
 
+            <HBox styleClass="stats-row">
+                <VBox styleClass="stat-card">
+                    <Label fx:id="totalSlotsLabel" styleClass="stat-number" text="0"/>
+                    <Label styleClass="stat-label" text="Total Slots"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label fx:id="occupiedSlotsLabel" styleClass="stat-number" text="0"/>
+                    <Label styleClass="stat-label" text="Occupied"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label fx:id="availableSlotsLabel" styleClass="stat-number" text="0"/>
+                    <Label styleClass="stat-label" text="Available"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label fx:id="todayEntriesLabel" styleClass="stat-number" text="0"/>
+                    <Label styleClass="stat-label" text="Today Entries"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label fx:id="todayExitsLabel" styleClass="stat-number" text="0"/>
+                    <Label styleClass="stat-label" text="Today Exits"/>
+                </VBox>
+            </HBox>
+
+            <Separator/>
+
+            <Label text="Live Parking Layout" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+            <FlowPane fx:id="slotGridPane" styleClass="slot-grid"/>
+
+            <Separator/>
+
             <Label text="Vehicle Entry" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
             <TextField fx:id="entryVehicleNumberField" promptText="Vehicle Number" maxWidth="250"/>
             <ComboBox fx:id="entryVehicleTypeCombo" promptText="Vehicle Type" maxWidth="250"/>
@@ -41,15 +73,9 @@
             <Label text="Active Bookings" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
             <ListView fx:id="activeBookingsListView" prefHeight="180" prefWidth="450"/>
             <Button text="Record Exit for Selected" onAction="#handleRecordExit" styleClass="staff-btn"/>
-            <Button text="Refresh Active Bookings" onAction="#loadActiveBookings" styleClass="staff-btn"/>
+            <Button text="Refresh All" onAction="#refreshAll" styleClass="staff-btn"/>
 
             <Label fx:id="exitStatusLabel" text=""/>
-
-            <Separator/>
-
-            <Label text="All Slots Status" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
-            <ListView fx:id="slotsListView" prefHeight="150" prefWidth="450"/>
-            <Button text="Refresh Slots" onAction="#loadSlots" styleClass="staff-btn"/>
 
         </VBox>
     </center>

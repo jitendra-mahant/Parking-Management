@@ -101,3 +101,54 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+
+.stats-row {
+    -fx-spacing: 15;
+}
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-padding: 15 25 15 25;
+    -fx-border-color: #e0e4e9;
+    -fx-border-radius: 10;
+    -fx-alignment: center;
+    -fx-min-width: 120;
+}
+
+.stat-card .stat-number {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.stat-card .stat-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.slot-grid {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+
+.slot-box {
+    -fx-min-width: 70;
+    -fx-min-height: 60;
+    -fx-background-radius: 8;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+
+.slot-free {
+    -fx-background-color: #27ae60;
+}
+
+.slot-occupied {
+    -fx-background-color: #e74c3c;
+}
+
+.slot-box .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}

@@ -49,4 +49,13 @@ public class StaffController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/quick-stats")
+    public ResponseEntity<?> getQuickStats() {
+        try {
+            return ResponseEntity.ok(staffService.getQuickStats());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

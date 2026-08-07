@@ -27,6 +27,9 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     private static final double RATE_PER_HOUR = 20.0; // simple flat rate for now
 
     public List<Slot> getAvailableSlots(String vehicleType) {
@@ -63,6 +66,9 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
+        notificationService.createNotification(customer,
+                "Your booking for slot " + slot.getSlotNumber() + " is confirmed.");
+
         return toResponse(booking);
     }
 
@@ -93,6 +99,9 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
+        notificationService.createNotification(booking.getCustomer(),
+                "Your booking for slot " + booking.getSlot().getSlotNumber() + " was cancelled.");
+
         return toResponse(booking);
     }
 
@@ -122,6 +131,9 @@ public class BookingService {
         slotRepository.save(slot);
 
         bookingRepository.save(booking);
+
+        notificationService.createNotification(booking.getCustomer(),
+                "Your booking for slot " + booking.getSlot().getSlotNumber() + " is complete. Fare: ₹" + fare);
 
         return toResponse(booking);
     }

@@ -121,4 +121,27 @@ public class StaffService {
                 booking.getFare()
         );
     }
+
+    public java.util.Map<String, Object> getQuickStats() {
+        List<Slot> allSlots = slotRepository.findAll();
+        long totalSlots = allSlots.size();
+        long occupiedSlots = allSlots.stream().filter(Slot::isOccupied).count();
+        long availableSlots = totalSlots - occupiedSlots;
+
+        LocalDateTime todayStart = LocalDateTime.now().toLocalDate().atStartOfDay();
+        long todayEntries = bookingRepository.findAll().stream()
+                .filter(b -> b.getEntryTime().isAfter(todayStart))
+                .count();
+        long todayExits = bookingRepository.findAll().stream()
+                .filter(b -> b.getExitTime() != null && b.getExitTime().isAfter(todayStart))
+                .count();
+
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("totalSlots", totalSlots);
+        stats.put("occupiedSlots", occupiedSlots);
+        stats.put("availableSlots", availableSlots);
+        stats.put("todayEntries", todayEntries);
+        stats.put("todayExits", todayExits);
+        return stats;
+    }
 }

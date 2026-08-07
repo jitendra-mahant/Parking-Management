@@ -79,4 +79,32 @@ public class StaffApiService {
             this.occupied = occupied;
         }
     }
+    public static QuickStats getQuickStats() throws IOException {
+        String response = ApiClient.get("/staff/quick-stats");
+        JsonObject obj = gson.fromJson(response, JsonObject.class);
+
+        return new QuickStats(
+                obj.get("totalSlots").getAsLong(),
+                obj.get("occupiedSlots").getAsLong(),
+                obj.get("availableSlots").getAsLong(),
+                obj.get("todayEntries").getAsLong(),
+                obj.get("todayExits").getAsLong()
+        );
+    }
+
+    public static class QuickStats {
+        public long totalSlots;
+        public long occupiedSlots;
+        public long availableSlots;
+        public long todayEntries;
+        public long todayExits;
+
+        public QuickStats(long totalSlots, long occupiedSlots, long availableSlots, long todayEntries, long todayExits) {
+            this.totalSlots = totalSlots;
+            this.occupiedSlots = occupiedSlots;
+            this.availableSlots = availableSlots;
+            this.todayEntries = todayEntries;
+            this.todayExits = todayExits;
+        }
+    }
 }
