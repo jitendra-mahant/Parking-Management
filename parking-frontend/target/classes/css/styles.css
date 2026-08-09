@@ -259,3 +259,9 @@
 .dark-root .tab:selected {
     -fx-background-color: #252b3a;
 }
+
+.sidebar-btn-admin-active {
+    -fx-background-color: #8e44ad;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}

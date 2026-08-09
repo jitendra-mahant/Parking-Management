@@ -22,8 +22,20 @@ public class User {
 
     private String phone;
 
+    private String address;
+
+    @jakarta.persistence.Lob
+    @jakarta.persistence.Column(columnDefinition = "LONGTEXT")
+    private String photoBase64;
+
     @Column(nullable = false)
     private String role;
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getPhotoBase64() { return photoBase64; }
+    public void setPhotoBase64(String photoBase64) { this.photoBase64 = photoBase64; }
 
     private LocalDateTime createdAt = LocalDateTime.now();
 

@@ -158,4 +158,13 @@ public class AdminDashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void goToDashboard() {
+        try {
+            MainApp.switchScene("/fxml/admin_dashboard.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

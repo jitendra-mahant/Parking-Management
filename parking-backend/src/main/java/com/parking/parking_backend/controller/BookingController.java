@@ -58,4 +58,13 @@ public class BookingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/my-stats")
+    public ResponseEntity<?> getMyStats(Authentication authentication) {
+        try {
+            return ResponseEntity.ok(bookingService.getMyStats(authentication.getName()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -149,4 +149,21 @@ public class BookingService {
                 booking.getFare()
         );
     }
+
+    public java.util.Map<String, Object> getMyStats(String email) {
+        List<Booking> myBookings = bookingRepository.findByCustomerEmailOrderByEntryTimeDesc(email);
+
+        long totalBookings = myBookings.size();
+        long activeBookings = myBookings.stream().filter(b -> b.getStatus().equals("ACTIVE")).count();
+        double totalSpent = myBookings.stream()
+                .filter(b -> b.getFare() != null)
+                .mapToDouble(Booking::getFare)
+                .sum();
+
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("totalBookings", totalBookings);
+        stats.put("activeBookings", activeBookings);
+        stats.put("totalSpent", totalSpent);
+        return stats;
+    }
 }

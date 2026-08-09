@@ -45,4 +45,15 @@ public class ProfileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/photo")
+    public ResponseEntity<?> updatePhoto(Authentication authentication, @RequestBody com.parking.parking_backend.dto.UpdatePhotoRequest request) {
+        try {
+            String email = authentication.getName();
+            profileService.updatePhoto(email, request.getPhotoBase64());
+            return ResponseEntity.ok("Photo updated successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -102,4 +102,27 @@ public class BookingApiService {
             this.fare = fare;
         }
     }
+
+    public static CustomerStats getMyStats() throws IOException {
+        String response = ApiClient.get("/bookings/my-stats");
+        JsonObject obj = gson.fromJson(response, JsonObject.class);
+
+        return new CustomerStats(
+                obj.get("totalBookings").getAsLong(),
+                obj.get("activeBookings").getAsLong(),
+                obj.get("totalSpent").getAsDouble()
+        );
+    }
+
+    public static class CustomerStats {
+        public long totalBookings;
+        public long activeBookings;
+        public double totalSpent;
+
+        public CustomerStats(long totalBookings, long activeBookings, double totalSpent) {
+            this.totalBookings = totalBookings;
+            this.activeBookings = activeBookings;
+            this.totalSpent = totalSpent;
+        }
+    }
 }

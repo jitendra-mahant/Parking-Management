@@ -22,7 +22,8 @@ public class ProfileService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new ProfileResponse(user.getName(), user.getEmail(), user.getPhone(), user.getRole());
+        return new ProfileResponse(user.getName(), user.getEmail(), user.getPhone(), user.getRole(),
+                user.getAddress(), user.getPhotoBase64());
     }
 
     public ProfileResponse updateProfile(String email, UpdateProfileRequest request) {
@@ -40,10 +41,22 @@ public class ProfileService {
         if (request.getPhone() != null && !request.getPhone().isEmpty()) {
             user.setPhone(request.getPhone());
         }
+        if (request.getAddress() != null) {
+            user.setAddress(request.getAddress());
+        }
 
         userRepository.save(user);
 
-        return new ProfileResponse(user.getName(), user.getEmail(), user.getPhone(), user.getRole());
+        return new ProfileResponse(user.getName(), user.getEmail(), user.getPhone(), user.getRole(),
+                user.getAddress(), user.getPhotoBase64());
+    }
+
+    public void updatePhoto(String email, String photoBase64) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setPhotoBase64(photoBase64);
+        userRepository.save(user);
     }
 
     public void changePassword(String email, ChangePasswordRequest request) {
