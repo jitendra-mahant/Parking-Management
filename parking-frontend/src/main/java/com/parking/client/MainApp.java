@@ -28,6 +28,11 @@ public class MainApp extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         scene.getStylesheets().add(MainApp.class.getResource("/css/styles.css").toExternalForm());
+
+        if (com.parking.client.util.ThemeManager.isDarkMode()) {
+            root.getStyleClass().add("dark-root");
+        }
+
         primaryStage.setScene(scene);
     }
 

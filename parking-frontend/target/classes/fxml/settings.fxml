@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.parking.client.controller.SettingsController">
+
+    <left>
+        <VBox styleClass="sidebar">
+            <Label text="Parking System"/>
+            <Button text="Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="My Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
+            <Button text="Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox alignment="TOP_LEFT" spacing="15" styleClass="content-area">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Settings"/>
+
+            <Label text="Appearance" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+            <CheckBox fx:id="darkModeCheckBox" text="Dark Theme"/>
+
+            <Label text="Language" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+            <ComboBox fx:id="languageCombo" promptText="Select Language" maxWidth="250"/>
+            <Label text="(Coming soon - display only for now)" style="-fx-text-fill: gray; -fx-font-size: 11px;"/>
+
+            <Label fx:id="statusLabel" style="-fx-text-fill: green;" text=""/>
+
+            <Button text="Apply Changes" onAction="#handleApply"/>
+
+        </VBox>
+    </center>
+
+</BorderPane>
