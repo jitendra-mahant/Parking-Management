@@ -14,9 +14,11 @@ D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\service\AuthApiService.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\VerifyOtpController.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\util\SessionManager.java
+D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\NotificationsController.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\ResetPasswordController.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\service\VehicleApiService.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\MyBookingsController.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\service\BookingApiService.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\service\ProfileApiService.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\VehicleController.java
+D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\service\NotificationApiService.java

@@ -14,6 +14,7 @@
 
    <HBox styleClass="header-bar, customer-header" alignment="CENTER" maxWidth="Infinity">
     <Label fx:id="welcomeLabel" text="Welcome!"/>
+    <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
 </HBox>
     <Button text="My Vehicles" onAction="#goToVehicles"/>
     <Label fx:id="roleLabel" style="-fx-font-size: 14px; -fx-text-fill: gray;" text=""/>

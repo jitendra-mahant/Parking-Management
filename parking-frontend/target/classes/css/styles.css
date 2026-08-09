@@ -152,3 +152,41 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+
+.notif-unread {
+    -fx-background-color: #eaf1ff;
+    -fx-font-weight: bold;
+}
+
+.notif-read {
+    -fx-background-color: white;
+    -fx-text-fill: #7f8c8d;
+}
+
+.slot-selected {
+    -fx-background-color: #2f6fed;
+    -fx-border-color: #16409e;
+    -fx-border-width: 3;
+}
+
+.slot-unavailable {
+    -fx-background-color: #bdc3c7;
+    -fx-cursor: default;
+}
+
+.ticket-box {
+    -fx-background-color: white;
+    -fx-border-color: #2f6fed;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 25;
+    -fx-alignment: center;
+    -fx-spacing: 8;
+}
+
+.ticket-id {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2f6fed;
+}

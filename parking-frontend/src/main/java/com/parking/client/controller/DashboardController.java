@@ -69,4 +69,13 @@ public class DashboardController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void goToNotifications() {
+        try {
+            MainApp.switchScene("/fxml/notifications.fxml");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
