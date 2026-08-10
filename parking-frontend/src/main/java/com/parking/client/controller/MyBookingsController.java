@@ -200,4 +200,14 @@ public class MyBookingsController implements Initializable {
         SessionManager.clearSession();
         try { MainApp.switchScene("/fxml/login.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
     }
+
+    @FXML
+    private void goToPayment() {
+        try { MainApp.switchScene("/fxml/payment.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+    }
+
+    @FXML
+    private void goToSettings() {
+        try { MainApp.switchScene("/fxml/settings.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+    }
 }

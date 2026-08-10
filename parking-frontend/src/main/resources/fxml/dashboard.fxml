@@ -6,6 +6,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.parking.client.controller.DashboardController">
@@ -26,31 +28,46 @@
     </left>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="15" styleClass="content-area">
+        <VBox alignment="TOP_LEFT" spacing="20" styleClass="content-area">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="24" right="30" bottom="24" left="30"/>
             </padding>
 
-            <Label fx:id="welcomeLabel" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Welcome!"/>
-            <Label fx:id="roleLabel" style="-fx-font-size: 14px; -fx-text-fill: gray;" text=""/>
+            <HBox styleClass="topbar">
+                <HBox styleClass="avatar-circle, avatar-customer">
+                    <Label fx:id="avatarLabel" text="U"/>
+                </HBox>
+                <VBox spacing="4">
+                    <Label fx:id="welcomeLabel" styleClass="topbar-title" text="Welcome!"/>
+                    <Label styleClass="topbar-subtitle" text="Here's what's happening with your parking today"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" xmlns="http://javafx.com/javafx"/>
+                <HBox styleClass="role-chip, chip-customer">
+                    <Label fx:id="roleLabel" text="CUSTOMER"/>
+                </HBox>
+            </HBox>
 
             <HBox styleClass="stats-row">
                 <VBox styleClass="stat-card">
                     <Label fx:id="activeBookingsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="Active Bookings"/>
+                    <Label styleClass="stat-label" text="ACTIVE BOOKINGS"/>
                 </VBox>
                 <VBox styleClass="stat-card">
                     <Label fx:id="totalBookingsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="Total Bookings"/>
+                    <Label styleClass="stat-label" text="TOTAL BOOKINGS"/>
                 </VBox>
                 <VBox styleClass="stat-card">
                     <Label fx:id="totalSpentLabel" styleClass="stat-number" text="₹0"/>
-                    <Label styleClass="stat-label" text="Total Spent"/>
+                    <Label styleClass="stat-label" text="TOTAL SPENT"/>
                 </VBox>
             </HBox>
 
-            <Button text="Find Parking / Book a Slot" onAction="#goToBookSlot" styleClass="customer-btn"
-                    style="-fx-font-size: 15px; -fx-padding: 14 30 14 30;"/>
+            <VBox styleClass="panel-card" spacing="14">
+                <Label styleClass="panel-title" text="Ready to park?"/>
+                <Label styleClass="topbar-subtitle" text="Find and reserve a slot near you in a few taps." wrapText="true"/>
+                <Button text="Find Parking / Book a Slot" onAction="#goToBookSlot" styleClass="customer-btn"
+                        style="-fx-font-size: 14px; -fx-padding: 13 28 13 28;"/>
+            </VBox>
 
         </VBox>
     </center>

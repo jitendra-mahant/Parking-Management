@@ -16,14 +16,17 @@ public class DashboardController implements Initializable {
 
     @FXML private Label welcomeLabel;
     @FXML private Label roleLabel;
+    @FXML private Label avatarLabel;
     @FXML private Label activeBookingsLabel;
     @FXML private Label totalBookingsLabel;
     @FXML private Label totalSpentLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        welcomeLabel.setText("Welcome, " + SessionManager.getName() + "!");
-        roleLabel.setText("Role: " + SessionManager.getRole());
+        String name = SessionManager.getName();
+        welcomeLabel.setText("Welcome, " + name + "!");
+        roleLabel.setText(SessionManager.getRole().toUpperCase());
+        avatarLabel.setText(name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase() : "U");
         loadStats();
     }
 
@@ -45,11 +48,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void handleLogout() {
         SessionManager.clearSession();
-        try {
-            MainApp.switchScene("/fxml/login.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApp.switchScene("/fxml/login.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML

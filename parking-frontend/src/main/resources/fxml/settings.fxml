@@ -19,6 +19,7 @@
             <Button text="My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="Payments" onAction="#goToPayment" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
             <Button text="Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
@@ -26,23 +27,26 @@
     </left>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="15" styleClass="content-area">
+        <VBox alignment="TOP_LEFT" spacing="18" styleClass="content-area">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="24" right="30" bottom="24" left="30"/>
             </padding>
 
-            <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Settings"/>
+            <Label styleClass="topbar-title" text="Settings"/>
+            <Label styleClass="topbar-subtitle" text="Customize your app experience"/>
 
-            <Label text="Appearance" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
-            <CheckBox fx:id="darkModeCheckBox" text="Dark Theme"/>
+            <VBox styleClass="panel-card" spacing="12">
+                <Label styleClass="panel-title" text="Appearance"/>
+                <CheckBox fx:id="darkModeCheckBox" text="Dark Theme"/>
 
-            <Label text="Language" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
-            <ComboBox fx:id="languageCombo" promptText="Select Language" maxWidth="250"/>
-            <Label text="(Coming soon - display only for now)" style="-fx-text-fill: gray; -fx-font-size: 11px;"/>
+                <Label styleClass="panel-title" text="Language"/>
+                <ComboBox fx:id="languageCombo" promptText="Select Language" maxWidth="260"/>
+                <Label text="(Coming soon - display only for now)" style="-fx-text-fill: gray; -fx-font-size: 11px;"/>
 
-            <Label fx:id="statusLabel" style="-fx-text-fill: green;" text=""/>
+                <Label fx:id="statusLabel" style="-fx-text-fill: #2ecc71;" text=""/>
 
-            <Button text="Apply Changes" onAction="#handleApply"/>
+                <Button text="Apply Changes" onAction="#handleApply" styleClass="customer-btn"/>
+            </VBox>
 
         </VBox>
     </center>

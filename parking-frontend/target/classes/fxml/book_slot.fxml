@@ -19,31 +19,37 @@
             <Button text="My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
             <Button text="My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="Payments" onAction="#goToPayment" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
         </VBox>
     </left>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="12" styleClass="content-area">
+        <VBox alignment="TOP_LEFT" spacing="18" styleClass="content-area">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="24" right="30" bottom="24" left="30"/>
             </padding>
 
-            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Book a Parking Slot"/>
+            <Label styleClass="topbar-title" text="Book a Parking Slot"/>
+            <Label styleClass="topbar-subtitle" text="Select your vehicle, then tap a green slot to reserve it"/>
 
-            <Label text="Select Vehicle"/>
-            <ComboBox fx:id="vehicleCombo" promptText="Choose your vehicle" maxWidth="300"/>
+            <VBox styleClass="panel-card" spacing="14">
+                <Label styleClass="panel-title" text="1. Select Vehicle"/>
+                <ComboBox fx:id="vehicleCombo" promptText="Choose your vehicle" maxWidth="320"/>
+                <Button text="Check Available Slots" onAction="#handleCheckSlots"/>
+            </VBox>
 
-            <Button text="Check Available Slots" onAction="#handleCheckSlots"/>
+            <VBox styleClass="panel-card" spacing="14">
+                <Label styleClass="panel-title" text="2. Choose a Slot"/>
+                <FlowPane fx:id="slotGridPane" styleClass="slot-grid"/>
 
-            <Label text="Tap a green slot to select it"/>
-            <FlowPane fx:id="slotGridPane" hgap="10" vgap="10"/>
+                <Label fx:id="errorLabel" style="-fx-text-fill: #e74c3c;" text=""/>
+                <Label fx:id="successLabel" style="-fx-text-fill: #2ecc71;" text=""/>
 
-            <Label fx:id="errorLabel" style="-fx-text-fill: red;" text=""/>
-            <Label fx:id="successLabel" style="-fx-text-fill: green;" text=""/>
-
-            <Button text="Book Selected Slot" onAction="#handleBookSlot"/>
+                <Button text="Book Selected Slot" onAction="#handleBookSlot" styleClass="customer-btn"/>
+            </VBox>
 
         </VBox>
     </center>

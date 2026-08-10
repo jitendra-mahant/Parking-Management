@@ -6,10 +6,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
@@ -24,58 +24,70 @@
     </left>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="12" styleClass="content-area">
+        <VBox alignment="TOP_LEFT" spacing="20" styleClass="content-area">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="24" right="30" bottom="24" left="30"/>
             </padding>
 
-            <Label fx:id="welcomeLabel" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Staff Dashboard"/>
+            <HBox styleClass="topbar">
+                <HBox styleClass="avatar-circle, avatar-staff">
+                    <Label fx:id="avatarLabel" text="S"/>
+                </HBox>
+                <VBox spacing="4">
+                    <Label fx:id="welcomeLabel" styleClass="topbar-title" text="Staff Dashboard"/>
+                    <Label styleClass="topbar-subtitle" text="Manage vehicle entries, exits, and slot status"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox styleClass="role-chip, chip-staff">
+                    <Label text="STAFF"/>
+                </HBox>
+            </HBox>
 
             <HBox styleClass="stats-row">
                 <VBox styleClass="stat-card">
                     <Label fx:id="totalSlotsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="Total Slots"/>
+                    <Label styleClass="stat-label" text="TOTAL SLOTS"/>
                 </VBox>
                 <VBox styleClass="stat-card">
                     <Label fx:id="occupiedSlotsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="Occupied"/>
+                    <Label styleClass="stat-label" text="OCCUPIED"/>
                 </VBox>
                 <VBox styleClass="stat-card">
                     <Label fx:id="availableSlotsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="Available"/>
+                    <Label styleClass="stat-label" text="AVAILABLE"/>
                 </VBox>
                 <VBox styleClass="stat-card">
                     <Label fx:id="todayEntriesLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="Today Entries"/>
+                    <Label styleClass="stat-label" text="TODAY ENTRIES"/>
                 </VBox>
                 <VBox styleClass="stat-card">
                     <Label fx:id="todayExitsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="Today Exits"/>
+                    <Label styleClass="stat-label" text="TODAY EXITS"/>
                 </VBox>
             </HBox>
 
-            <Separator/>
+            <VBox styleClass="panel-card" spacing="12">
+                <Label styleClass="panel-title" text="Live Parking Layout"/>
+                <FlowPane fx:id="slotGridPane" styleClass="slot-grid"/>
+            </VBox>
 
-            <Label text="Live Parking Layout" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
-            <FlowPane fx:id="slotGridPane" styleClass="slot-grid"/>
+            <HBox spacing="20">
+                <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
+                    <Label styleClass="panel-title" text="Vehicle Entry"/>
+                    <TextField fx:id="entryVehicleNumberField" promptText="Vehicle Number" maxWidth="Infinity"/>
+                    <ComboBox fx:id="entryVehicleTypeCombo" promptText="Vehicle Type" maxWidth="Infinity"/>
+                    <Button text="Record Entry" onAction="#handleRecordEntry" styleClass="staff-btn"/>
+                    <Label fx:id="entryStatusLabel" text=""/>
+                </VBox>
 
-            <Separator/>
-
-            <Label text="Vehicle Entry" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
-            <TextField fx:id="entryVehicleNumberField" promptText="Vehicle Number" maxWidth="250"/>
-            <ComboBox fx:id="entryVehicleTypeCombo" promptText="Vehicle Type" maxWidth="250"/>
-            <Button text="Record Entry" onAction="#handleRecordEntry" styleClass="staff-btn"/>
-
-            <Label fx:id="entryStatusLabel" text=""/>
-
-            <Separator/>
-
-            <Label text="Active Bookings" style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
-            <ListView fx:id="activeBookingsListView" prefHeight="180" prefWidth="450"/>
-            <Button text="Record Exit for Selected" onAction="#handleRecordExit" styleClass="staff-btn"/>
-            <Button text="Refresh All" onAction="#refreshAll" styleClass="staff-btn"/>
-
-            <Label fx:id="exitStatusLabel" text=""/>
+                <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
+                    <Label styleClass="panel-title" text="Active Bookings"/>
+                    <ListView fx:id="activeBookingsListView" prefHeight="150"/>
+                    <Button text="Record Exit for Selected" onAction="#handleRecordExit" styleClass="staff-btn"/>
+                    <Button text="Refresh All" onAction="#refreshAll" styleClass="staff-btn"/>
+                    <Label fx:id="exitStatusLabel" text=""/>
+                </VBox>
+            </HBox>
 
         </VBox>
     </center>

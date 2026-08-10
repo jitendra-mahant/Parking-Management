@@ -79,4 +79,9 @@ public class SettingsController implements Initializable {
         SessionManager.clearSession();
         try { MainApp.switchScene("/fxml/login.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
+
+    @FXML
+    private void goToPayment() {
+        try { MainApp.switchScene("/fxml/payment.fxml"); } catch (Exception e) { e.printStackTrace(); }
+    }
 }

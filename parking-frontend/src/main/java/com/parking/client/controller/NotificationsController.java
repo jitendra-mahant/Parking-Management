@@ -1,17 +1,18 @@
 package com.parking.client.controller;
 
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import com.parking.client.MainApp;
 import com.parking.client.service.NotificationApiService;
 import com.parking.client.util.SessionManager;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
 
 public class NotificationsController implements Initializable {
 
@@ -103,5 +104,15 @@ public class NotificationsController implements Initializable {
     private void handleLogout() {
         SessionManager.clearSession();
         try { MainApp.switchScene("/fxml/login.fxml"); } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    private void goToPayment() {
+        try { MainApp.switchScene("/fxml/payment.fxml"); } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    private void goToSettings() {
+        try { MainApp.switchScene("/fxml/settings.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 }

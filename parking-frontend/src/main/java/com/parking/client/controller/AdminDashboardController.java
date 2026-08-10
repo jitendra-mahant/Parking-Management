@@ -35,11 +35,15 @@ public class AdminDashboardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        welcomeLabel.setText("Admin Dashboard - " + SessionManager.getName());
+        String name = SessionManager.getName();
+        welcomeLabel.setText("Admin Dashboard - " + name);
+        avatarLabel.setText(name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase() : "A");
         loadRevenue();
         loadStaff();
         loadBookings();
     }
+
+    @FXML private Label avatarLabel;
 
     @FXML
     private void loadRevenue() {

@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 public class StaffDashboardController implements Initializable {
 
     @FXML private Label welcomeLabel;
+    @FXML private Label avatarLabel;
     @FXML private Label totalSlotsLabel;
     @FXML private Label occupiedSlotsLabel;
     @FXML private Label availableSlotsLabel;
@@ -43,7 +44,9 @@ public class StaffDashboardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        welcomeLabel.setText("Staff Dashboard - " + SessionManager.getName());
+        String name = SessionManager.getName();
+        welcomeLabel.setText("Staff Dashboard - " + name);
+        avatarLabel.setText(name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase() : "S");
         entryVehicleTypeCombo.setItems(FXCollections.observableArrayList("Car", "Bike", "Truck"));
         refreshAll();
     }
@@ -170,20 +173,12 @@ public class StaffDashboardController implements Initializable {
 
     @FXML
     private void goToDashboard() {
-        try {
-            MainApp.switchScene("/fxml/staff_dashboard.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApp.switchScene("/fxml/staff_dashboard.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
     private void handleLogout() {
         SessionManager.clearSession();
-        try {
-            MainApp.switchScene("/fxml/login.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { MainApp.switchScene("/fxml/login.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 }

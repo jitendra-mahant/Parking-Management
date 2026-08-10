@@ -20,41 +20,46 @@
             <Button text="My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
+            <Button text="Payments" onAction="#goToPayment" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
         </VBox>
     </left>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="12" styleClass="content-area">
+        <VBox alignment="TOP_LEFT" spacing="18" styleClass="content-area">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets top="24" right="30" bottom="24" left="30"/>
             </padding>
 
-            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="My Bookings"/>
+            <Label styleClass="topbar-title" text="My Bookings"/>
+            <Label styleClass="topbar-subtitle" text="Track active parking and view past history"/>
 
-            <TabPane prefHeight="350" prefWidth="500">
-                <Tab text="Active" closable="false">
-                    <VBox spacing="10">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <ListView fx:id="activeListView" prefHeight="220"/>
-                        <Button text="Complete Selected (Exit Vehicle)" onAction="#handleComplete"/>
-                        <Button text="Cancel Selected Booking" onAction="#handleCancel"/>
-                    </VBox>
-                </Tab>
-                <Tab text="History" closable="false">
-                    <VBox spacing="10">
-                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                        <ListView fx:id="historyListView" prefHeight="220"/>
-                        <Button text="Download Receipt for Selected" onAction="#handleDownloadReceipt"/>
-                    </VBox>
-                </Tab>
-            </TabPane>
+            <VBox styleClass="panel-card" spacing="10">
+                <TabPane prefHeight="340" prefWidth="500">
+                    <Tab text="Active" closable="false">
+                        <VBox spacing="10">
+                            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                            <ListView fx:id="activeListView" prefHeight="200"/>
+                            <Button text="Complete Selected (Exit Vehicle)" onAction="#handleComplete" styleClass="customer-btn"/>
+                            <Button text="Cancel Selected Booking" onAction="#handleCancel"/>
+                        </VBox>
+                    </Tab>
+                    <Tab text="History" closable="false">
+                        <VBox spacing="10">
+                            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                            <ListView fx:id="historyListView" prefHeight="200"/>
+                            <Button text="Download Receipt for Selected" onAction="#handleDownloadReceipt" styleClass="customer-btn"/>
+                        </VBox>
+                    </Tab>
+                </TabPane>
 
-            <Label fx:id="errorLabel" style="-fx-text-fill: red;" text=""/>
-            <Label fx:id="successLabel" style="-fx-text-fill: green;" text=""/>
+                <Label fx:id="errorLabel" style="-fx-text-fill: #e74c3c;" text=""/>
+                <Label fx:id="successLabel" style="-fx-text-fill: #2ecc71;" text=""/>
 
-            <Button text="Refresh" onAction="#loadBookings"/>
+                <Button text="Refresh" onAction="#loadBookings"/>
+            </VBox>
 
         </VBox>
     </center>
