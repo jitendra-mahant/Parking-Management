@@ -13,7 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.parking.client.controller.StaffDashboardController">
+            fx:controller="com.parking.client.controller.StaffDashboardController"
+            stylesheets="@../css/styles.css"
+            styleClass="main-layout">
 
     <left>
         <VBox styleClass="sidebar">

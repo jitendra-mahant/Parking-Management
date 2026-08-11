@@ -11,7 +11,8 @@
 
 <StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.parking.client.controller.LoginController"
-           style="-fx-background-color: #f0f2f7;">
+           stylesheets="@../css/styles.css"
+           styleClass="main-layout">
 
     <VBox alignment="CENTER" spacing="18" styleClass="auth-card" maxWidth="380">
         <padding>
