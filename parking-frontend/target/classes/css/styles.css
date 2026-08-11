@@ -396,3 +396,14 @@
 
 .dark-root .panel-card { -fx-background-color: #1c2030; -fx-effect: none; -fx-border-color: #2c3346; -fx-border-width: 1; -fx-border-radius: 14; }
 .dark-root .panel-title { -fx-text-fill: #e4e7ee; }
+
+/* Consistent button sizing across panel cards */
+.panel-card .button {
+    -fx-min-width: 200;
+    -fx-pref-height: 38;
+    -fx-alignment: center;
+}
+
+.panel-card .button.sidebar-btn {
+    -fx-min-width: 0;
+}
