@@ -14,8 +14,11 @@ public class MainApp extends Application {
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
         primaryStage.setTitle("Parking Management System");
-        primaryStage.setMinWidth(500);
-        primaryStage.setMinHeight(600);
+
+        primaryStage.setWidth(1200);
+        primaryStage.setHeight(800);
+        primaryStage.setMinWidth(1000);
+        primaryStage.setMinHeight(650);
 
         switchScene("/fxml/login.fxml");
 

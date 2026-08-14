@@ -419,3 +419,20 @@
     -fx-font-weight: bold;
     -fx-text-fill: #2563eb;
 }
+
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.content-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.content-scroll .scroll-bar:vertical {
+    -fx-pref-width: 10px;
+}
+
+.content-scroll .scroll-bar:horizontal {
+    -fx-pref-height: 0px;
+}
