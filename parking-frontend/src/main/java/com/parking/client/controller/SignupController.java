@@ -10,6 +10,7 @@ import com.parking.client.util.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -21,6 +22,9 @@ public class SignupController implements Initializable {
 
     @FXML
     private TextField emailField;
+    
+        @FXML
+    private Button signupButton;
 
     @FXML
     private TextField phoneField;
@@ -70,7 +74,9 @@ public class SignupController implements Initializable {
             return;
         }
 
-        errorLabel.setText("Creating account...");
+               errorLabel.setText("");
+        signupButton.setDisable(true);
+        signupButton.setText("Creating account...");
 
         new Thread(() -> {
             try {
@@ -82,14 +88,18 @@ public class SignupController implements Initializable {
                     try {
                         MainApp.switchScene("/fxml/dashboard.fxml");
                     } catch (Exception e) {
+                        signupButton.setDisable(false);
+                        signupButton.setText("Sign Up");
                         errorLabel.setText("Signup succeeded but dashboard failed to load");
                     }
                 });
 
             } catch (Exception e) {
-                Platform.runLater(() ->
-                        errorLabel.setText("Signup failed: " + e.getMessage())
-                );
+                Platform.runLater(() -> {
+                    signupButton.setDisable(false);
+                    signupButton.setText("Sign Up");
+                    errorLabel.setText("Signup failed: " + e.getMessage());
+                });
             }
         }).start();
     }

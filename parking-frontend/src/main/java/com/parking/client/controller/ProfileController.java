@@ -14,6 +14,7 @@ import com.parking.client.util.SessionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -28,6 +29,11 @@ public class ProfileController implements Initializable {
 
     @FXML private TextField nameField;
     @FXML private TextField emailField;
+        @FXML
+    private Button saveProfileButton;
+
+    @FXML
+    private Button changePasswordButton;
     @FXML private TextField phoneField;
     @FXML private TextField addressField;
     @FXML private Label profileErrorLabel;
@@ -125,7 +131,7 @@ public class ProfileController implements Initializable {
         }
     }
 
-    @FXML
+        @FXML
     private void handleUpdateProfile() {
         String name = nameField.getText();
         String phone = phoneField.getText();
@@ -139,17 +145,28 @@ public class ProfileController implements Initializable {
             return;
         }
 
+        saveProfileButton.setDisable(true);
+        saveProfileButton.setText("Saving...");
+
         new Thread(() -> {
             try {
                 ProfileApiService.updateProfile(name, phone, address);
-                Platform.runLater(() -> profileSuccessLabel.setText("Profile updated successfully"));
+                Platform.runLater(() -> {
+                    saveProfileButton.setDisable(false);
+                    saveProfileButton.setText("Save Changes");
+                    profileSuccessLabel.setText("Profile updated successfully");
+                });
             } catch (Exception e) {
-                Platform.runLater(() -> profileErrorLabel.setText("Update failed: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    saveProfileButton.setDisable(false);
+                    saveProfileButton.setText("Save Changes");
+                    profileErrorLabel.setText("Update failed: " + e.getMessage());
+                });
             }
         }).start();
     }
 
-    @FXML
+       @FXML
     private void handleChangePassword() {
         String currentPassword = currentPasswordField.getText();
         String newPassword = newPasswordField.getText();
@@ -162,16 +179,25 @@ public class ProfileController implements Initializable {
             return;
         }
 
+        changePasswordButton.setDisable(true);
+        changePasswordButton.setText("Changing...");
+
         new Thread(() -> {
             try {
                 ProfileApiService.changePassword(currentPassword, newPassword);
                 Platform.runLater(() -> {
+                    changePasswordButton.setDisable(false);
+                    changePasswordButton.setText("Change Password");
                     passwordSuccessLabel.setText("Password changed successfully");
                     currentPasswordField.clear();
                     newPasswordField.clear();
                 });
             } catch (Exception e) {
-                Platform.runLater(() -> passwordErrorLabel.setText("Failed: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    changePasswordButton.setDisable(false);
+                    changePasswordButton.setText("Change Password");
+                    passwordErrorLabel.setText("Failed: " + e.getMessage());
+                });
             }
         }).start();
     }

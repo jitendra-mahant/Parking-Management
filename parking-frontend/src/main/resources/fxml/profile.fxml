@@ -24,6 +24,8 @@
             <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
             <Button text="Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button fx:id="saveProfileButton" text="Save Changes" onAction="#handleUpdateProfile" styleClass="customer-btn"/>
+            <Button fx:id="changePasswordButton" text="Change Password" onAction="#handleChangePassword" styleClass="customer-btn"/>
         </VBox>
     </left>
 

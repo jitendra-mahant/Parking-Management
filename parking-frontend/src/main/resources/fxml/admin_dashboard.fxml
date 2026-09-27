@@ -10,6 +10,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 
 <BorderPane xmlns="http://javafx.com/javafx" 
             xmlns:fx="http://javafx.com/fxml"
@@ -58,24 +60,44 @@
             </VBox>
 
             <!-- Management Sections -->
-            <HBox spacing="20">
-                <VBox styleClass="panel-card" spacing="14" HBox.hgrow="ALWAYS">
+                            <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
                     <Label styleClass="panel-title" text="Manage Staff"/>
-                    <TextField fx:id="staffNameField" promptText="Full Name" maxWidth="Infinity"/>
-                    <TextField fx:id="staffEmailField" promptText="Email Address" maxWidth="Infinity"/>
+                    <TextField fx:id="staffNameField" promptText="Name" maxWidth="Infinity"/>
+                    <TextField fx:id="staffEmailField" promptText="Email" maxWidth="Infinity"/>
                     <PasswordField fx:id="staffPasswordField" promptText="Password" maxWidth="Infinity"/>
-                    <TextField fx:id="staffPhoneField" promptText="Phone Number" maxWidth="Infinity"/>
-                    <Button text="+ Add New Staff" onAction="#handleAddStaff" styleClass="admin-btn" maxWidth="Infinity"/>
-                    <Label fx:id="staffStatusLabel" styleClass="topbar-subtitle" text=""/>
-                    <ListView fx:id="staffListView" prefHeight="130"/>
-                    <Button text="Remove Selected Staff" onAction="#handleRemoveStaff" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity"/>
+                    <TextField fx:id="staffPhoneField" promptText="Phone" maxWidth="Infinity"/>
+                    <Button text="Add Staff" onAction="#handleAddStaff" styleClass="admin-btn"/>
+                    <Label fx:id="staffStatusLabel" text=""/>
+                    <TableView fx:id="staffTable" prefHeight="180">
+                        <columns>
+                            <TableColumn fx:id="colStaffName" text="Name" prefWidth="130"/>
+                            <TableColumn fx:id="colStaffEmail" text="Email" prefWidth="160"/>
+                            <TableColumn fx:id="colStaffPhone" text="Phone" prefWidth="100"/>
+                            <TableColumn fx:id="colStaffDelete" text="" prefWidth="80"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No staff added yet"/>
+                        </placeholder>
+                    </TableView>
                 </VBox>
 
-                <VBox styleClass="panel-card" spacing="14" HBox.hgrow="ALWAYS">
+                <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
                     <Label styleClass="panel-title" text="All Bookings"/>
-                    <ListView fx:id="bookingsListView" prefHeight="280" VBox.vgrow="ALWAYS"/>
-                    <Button text="Refresh Bookings 🔄" onAction="#loadBookings" styleClass="admin-btn" maxWidth="Infinity"/>
+                    <TableView fx:id="bookingsTable" prefHeight="330">
+                        <columns>
+                            <TableColumn fx:id="colBookSlot" text="Slot" prefWidth="70"/>
+                            <TableColumn fx:id="colBookVehicle" text="Vehicle" prefWidth="120"/>
+                            <TableColumn fx:id="colBookStatus" text="Status" prefWidth="100"/>
+                            <TableColumn fx:id="colBookFare" text="Fare" prefWidth="90"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No bookings yet"/>
+                        </placeholder>
+                    </TableView>
+                    <Button text="Refresh Bookings" onAction="#loadBookings" styleClass="admin-btn"/>
                 </VBox>
+                <Button text="🏠  Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn, sidebar-btn-admin-active" maxWidth="Infinity"/>
+<Button text="🚪  Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
             </HBox>
 
         </VBox>

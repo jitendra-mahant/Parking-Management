@@ -11,6 +11,8 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
@@ -52,8 +54,7 @@
                                styleClass="topbar-title"
                                text="Staff Dashboard"/>
 
-                        <Label styleClass="topbar-subtitle"
-                               text="Manage vehicle entries, exits, and slot status"/>
+                        <Label styleClass="topbar-subtitle" text="Sunrise Parking Complex - 24 Slots"/>
                     </VBox>
 
                     <Region HBox.hgrow="ALWAYS"/>
@@ -109,34 +110,27 @@
                     <Label styleClass="panel-title"
                            text="Live Parking Layout"/>
 
-                    <FlowPane fx:id="slotGridPane"
-                              styleClass="slot-grid"/>
+                    <VBox fx:id="slotGridPane" spacing="16"/>
                 </VBox>
 
                 <HBox spacing="20">
 
-                    <VBox styleClass="panel-card"
-                          spacing="10"
-                          HBox.hgrow="ALWAYS">
-
-                        <Label styleClass="panel-title"
-                               text="Vehicle Entry"/>
-
-                        <TextField fx:id="entryVehicleNumberField"
-                                   promptText="Vehicle Number"
-                                   maxWidth="Infinity"/>
-
-                        <ComboBox fx:id="entryVehicleTypeCombo"
-                                  promptText="Vehicle Type"
-                                  maxWidth="Infinity"/>
-
-                        <Button text="Record Entry"
-                                onAction="#handleRecordEntry"
-                                styleClass="staff-btn"/>
-
-                        <Label fx:id="entryStatusLabel"
-                               text=""/>
-                    </VBox>
+                                    <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
+                    <Label styleClass="panel-title" text="Active Bookings"/>
+                    <TableView fx:id="activeBookingsTable" prefHeight="200">
+                        <columns>
+                            <TableColumn fx:id="colStaffSlot" text="Slot" prefWidth="70"/>
+                            <TableColumn fx:id="colStaffVehicle" text="Vehicle" prefWidth="120"/>
+                            <TableColumn fx:id="colStaffEntry" text="Entry Time" prefWidth="150"/>
+                            <TableColumn fx:id="colStaffAction" text="" prefWidth="90"/>
+                        </columns>
+                        <placeholder>
+                            <Label text="No active bookings right now"/>
+                        </placeholder>
+                    </TableView>
+                    <Button text="Refresh All" onAction="#refreshAll" styleClass="staff-btn"/>
+                    <Label fx:id="exitStatusLabel" text=""/>
+                </VBox>
 
 
                     <VBox styleClass="panel-card"
@@ -160,7 +154,8 @@
                         <Label fx:id="exitStatusLabel"
                                text=""/>
                     </VBox>
-
+<Button text="🏠  Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn, sidebar-btn-staff-active" maxWidth="Infinity"/>
+<Button text="🚪  Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
                 </HBox>
 
             </VBox>

@@ -38,7 +38,7 @@
             </padding>
 
             <Label styleClass="topbar-title" text="Book a Parking Slot"/>
-            <Label styleClass="topbar-subtitle" text="Select your vehicle, then tap an available slot to reserve it."/>
+            <Label styleClass="topbar-subtitle" text="Sunrise Parking Complex - Select your vehicle, then tap a green slot"/>
 
             <!-- Step 1: Select Vehicle -->
             <VBox styleClass="panel-card" spacing="14">
@@ -57,7 +57,7 @@
 
                 <Button text="Book Selected Slot ➔" onAction="#handleBookSlot" styleClass="customer-btn"/>
             </VBox>
-
+<Button fx:id="bookButton" text="Book Selected Slot" onAction="#handleBookSlot" styleClass="customer-btn"/>
         </VBox>
     </center>
 

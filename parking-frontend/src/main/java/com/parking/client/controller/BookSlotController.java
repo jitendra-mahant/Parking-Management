@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -27,6 +28,8 @@ public class BookSlotController implements Initializable {
     @FXML private FlowPane slotGridPane;
     @FXML private Label errorLabel;
     @FXML private Label successLabel;
+        @FXML
+    private Button bookButton;
 
     private List<VehicleApiService.VehicleData> myVehicles;
     private List<BookingApiService.SlotData> availableSlots;
@@ -109,7 +112,7 @@ public class BookSlotController implements Initializable {
         errorLabel.setText("");
     }
 
-    @FXML
+        @FXML
     private void handleBookSlot() {
         errorLabel.setText("");
         successLabel.setText("");
@@ -130,17 +133,26 @@ public class BookSlotController implements Initializable {
         String vehicleType = myVehicles.get(vehicleIndex).vehicleType;
         String vehicleLabel = vehicleCombo.getValue();
 
+        bookButton.setDisable(true);
+        bookButton.setText("Booking...");
+
         new Thread(() -> {
             try {
                 BookingApiService.BookingData booking = BookingApiService.bookSlot(vehicleId, vehicleType);
                 Platform.runLater(() -> {
+                    bookButton.setDisable(false);
+                    bookButton.setText("Book Selected Slot");
                     successLabel.setText("Slot booked successfully!");
                     slotGridPane.getChildren().clear();
                     selectedSlotId = null;
                     showTicketConfirmation(booking, vehicleLabel);
                 });
             } catch (Exception e) {
-                Platform.runLater(() -> errorLabel.setText("Booking failed: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    bookButton.setDisable(false);
+                    bookButton.setText("Book Selected Slot");
+                    errorLabel.setText("Booking failed: " + e.getMessage());
+                });
             }
         }).start();
     }

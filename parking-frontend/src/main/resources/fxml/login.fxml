@@ -46,7 +46,7 @@
             <Label text="New here?" style="-fx-font-size: 12px; -fx-text-fill: #8891a5;"/>
             <Label text="Create an account" styleClass="auth-link" onMouseClicked="#goToSignup"/>
         </HBox>
-
+<Button fx:id="loginButton" text="Log In" onAction="#handleLogin" maxWidth="Infinity"/>
     </VBox>
 
 </StackPane>

@@ -1,25 +1,22 @@
 package com.parking.client.controller;
 
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-
 import com.parking.client.MainApp;
 import com.parking.client.service.BookingApiService;
 import com.parking.client.service.StaffApiService;
 import com.parking.client.util.SessionManager;
-
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class StaffDashboardController implements Initializable {
 
@@ -31,16 +28,19 @@ public class StaffDashboardController implements Initializable {
     @FXML private Label todayEntriesLabel;
     @FXML private Label todayExitsLabel;
 
-    @FXML private FlowPane slotGridPane;
+    @FXML private VBox slotGridPane;
 
     @FXML private TextField entryVehicleNumberField;
     @FXML private ComboBox<String> entryVehicleTypeCombo;
     @FXML private Label entryStatusLabel;
 
-    @FXML private ListView<String> activeBookingsListView;
-    @FXML private Label exitStatusLabel;
+    @FXML private TableView<BookingApiService.BookingData> activeBookingsTable;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colStaffSlot;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colStaffVehicle;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colStaffEntry;
+    @FXML private TableColumn<BookingApiService.BookingData, Void> colStaffAction;
 
-    private List<BookingApiService.BookingData> currentActiveBookings;
+    @FXML private Label exitStatusLabel;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -48,7 +48,44 @@ public class StaffDashboardController implements Initializable {
         welcomeLabel.setText("Staff Dashboard - " + name);
         avatarLabel.setText(name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase() : "S");
         entryVehicleTypeCombo.setItems(FXCollections.observableArrayList("Car", "Bike", "Truck"));
+
+        colStaffSlot.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().slotNumber));
+        colStaffVehicle.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().vehicleNumber));
+        colStaffEntry.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(d.getValue().entryTime)));
+        addExitButtonColumn();
+
         refreshAll();
+    }
+
+    private String formatDateTime(String iso) {
+        if (iso == null) return "-";
+        return iso.replace("T", " ").length() >= 16 ? iso.replace("T", " ").substring(0, 16) : iso;
+    }
+
+    private void addExitButtonColumn() {
+        colStaffAction.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<BookingApiService.BookingData, Void> call(TableColumn<BookingApiService.BookingData, Void> param) {
+                return new TableCell<>() {
+                    private final Button exitBtn = new Button("Exit");
+
+                    {
+                        exitBtn.getStyleClass().add("staff-btn");
+                        exitBtn.setStyle("-fx-font-size: 11px; -fx-padding: 5 14 5 14; -fx-min-width: 0;");
+                        exitBtn.setOnAction(e -> {
+                            BookingApiService.BookingData b = getTableView().getItems().get(getIndex());
+                            recordExit(b);
+                        });
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setGraphic(empty ? null : exitBtn);
+                    }
+                };
+            }
+        });
     }
 
     @FXML
@@ -81,17 +118,31 @@ public class StaffDashboardController implements Initializable {
                 List<StaffApiService.SlotInfo> slots = StaffApiService.getAllSlots();
                 Platform.runLater(() -> {
                     slotGridPane.getChildren().clear();
-                    for (StaffApiService.SlotInfo slot : slots) {
-                        VBox box = new VBox();
-                        box.setAlignment(Pos.CENTER);
-                        box.getStyleClass().add("slot-box");
-                        box.getStyleClass().add(slot.occupied ? "slot-occupied" : "slot-free");
 
-                        Label numberLabel = new Label(slot.slotNumber);
-                        Label typeLabel = new Label(slot.vehicleType);
-                        box.getChildren().addAll(numberLabel, typeLabel);
+                    String[] zones = {"Car", "Bike", "Truck"};
+                    for (String zone : zones) {
+                        Label zoneLabel = new Label(zone + " Zone");
+                        zoneLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #5a6478;");
 
-                        slotGridPane.getChildren().add(box);
+                        javafx.scene.layout.FlowPane zoneRow = new javafx.scene.layout.FlowPane();
+                        zoneRow.getStyleClass().add("slot-grid");
+
+                        for (StaffApiService.SlotInfo slot : slots) {
+                            if (!slot.vehicleType.equals(zone)) continue;
+
+                            VBox box = new VBox();
+                            box.setAlignment(Pos.CENTER);
+                            box.getStyleClass().add("slot-box");
+                            box.getStyleClass().add(slot.occupied ? "slot-occupied" : "slot-free");
+
+                            Label numberLabel = new Label(slot.slotNumber);
+                            box.getChildren().add(numberLabel);
+
+                            zoneRow.getChildren().add(box);
+                        }
+
+                        VBox zoneBlock = new VBox(6, zoneLabel, zoneRow);
+                        slotGridPane.getChildren().add(zoneBlock);
                     }
                 });
             } catch (Exception e) {
@@ -130,37 +181,20 @@ public class StaffDashboardController implements Initializable {
     private void loadActiveBookings() {
         new Thread(() -> {
             try {
-                currentActiveBookings = StaffApiService.getAllActiveBookings();
-                Platform.runLater(() -> {
-                    activeBookingsListView.getItems().clear();
-                    for (BookingApiService.BookingData b : currentActiveBookings) {
-                        activeBookingsListView.getItems().add(
-                                "Slot " + b.slotNumber + " | " + b.vehicleNumber + " | Entry: " + b.entryTime
-                        );
-                    }
-                });
+                List<BookingApiService.BookingData> bookings = StaffApiService.getAllActiveBookings();
+                Platform.runLater(() -> activeBookingsTable.setItems(FXCollections.observableArrayList(bookings)));
             } catch (Exception e) {
                 Platform.runLater(() -> exitStatusLabel.setText("Failed to load bookings: " + e.getMessage()));
             }
         }).start();
     }
 
-    @FXML
-    private void handleRecordExit() {
-        int selectedIndex = activeBookingsListView.getSelectionModel().getSelectedIndex();
-
+    private void recordExit(BookingApiService.BookingData booking) {
         exitStatusLabel.setText("");
-
-        if (selectedIndex < 0 || currentActiveBookings == null) {
-            exitStatusLabel.setText("Please select a booking to exit");
-            return;
-        }
-
-        Long bookingId = currentActiveBookings.get(selectedIndex).id;
 
         new Thread(() -> {
             try {
-                BookingApiService.BookingData result = StaffApiService.recordExit(bookingId);
+                BookingApiService.BookingData result = StaffApiService.recordExit(booking.id);
                 Platform.runLater(() -> {
                     exitStatusLabel.setText("Exit recorded. Fare: ₹" + result.fare);
                     refreshAll();

@@ -6,6 +6,7 @@ import com.parking.client.util.SessionManager;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -21,7 +22,10 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
-    @FXML
+        @FXML
+    private Button loginButton;
+
+        @FXML
     private void handleLogin() {
         String email = emailField.getText();
         String password = passwordField.getText();
@@ -31,7 +35,9 @@ public class LoginController {
             return;
         }
 
-        errorLabel.setText("Logging in...");
+        errorLabel.setText("");
+        loginButton.setDisable(true);
+        loginButton.setText("Logging in...");
 
         new Thread(() -> {
             try {
@@ -49,17 +55,23 @@ public class LoginController {
                             MainApp.switchScene("/fxml/dashboard.fxml");
                         }
                     } catch (Exception e) {
+                        loginButton.setDisable(false);
+                        loginButton.setText("Log In");
                         errorLabel.setText("Login succeeded but dashboard failed to load: " + e.getMessage());
                     }
                 });
 
             } catch (Exception e) {
-                Platform.runLater(() ->
-                        errorLabel.setText("Login failed: " + e.getMessage())
-                );
+                Platform.runLater(() -> {
+                    loginButton.setDisable(false);
+                    loginButton.setText("Log In");
+                    errorLabel.setText("Login failed: " + e.getMessage());
+                });
             }
         }).start();
     }
+
+    
 
     @FXML
     private void goToSignup() {
