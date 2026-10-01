@@ -125,4 +125,10 @@ public class BookingApiService {
             this.totalSpent = totalSpent;
         }
     }
+
+        public static double getRate(String vehicleType) throws IOException {
+        String response = ApiClient.get("/bookings/rate?vehicleType=" + vehicleType);
+        JsonObject obj = gson.fromJson(response, JsonObject.class);
+        return obj.get("ratePerHour").getAsDouble();
+    }
 }

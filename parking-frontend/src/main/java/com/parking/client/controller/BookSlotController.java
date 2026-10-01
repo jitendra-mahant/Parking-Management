@@ -11,6 +11,7 @@ import com.parking.client.util.SessionManager;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -24,11 +25,17 @@ import javafx.scene.layout.VBox;
 
 public class BookSlotController implements Initializable {
 
-    @FXML private ComboBox<String> vehicleCombo;
-    @FXML private FlowPane slotGridPane;
-    @FXML private Label errorLabel;
-    @FXML private Label successLabel;
-        @FXML
+    @FXML
+    private ComboBox<String> vehicleCombo;
+    @FXML
+    private FlowPane slotGridPane;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private Label successLabel;
+    @FXML
+    private Label rateLabel;
+    @FXML
     private Button bookButton;
 
     private List<VehicleApiService.VehicleData> myVehicles;
@@ -39,8 +46,9 @@ public class BookSlotController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         loadVehicles();
+                vehicleCombo.setOnAction(this::handleVehicleSelected);
     }
-
+    
     private void loadVehicles() {
         new Thread(() -> {
             try {
@@ -50,6 +58,25 @@ public class BookSlotController implements Initializable {
                 )));
             } catch (Exception e) {
                 Platform.runLater(() -> errorLabel.setText("Failed to load vehicles: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+        private void handleVehicleSelected(ActionEvent event) {
+        int selectedIndex = vehicleCombo.getSelectionModel().getSelectedIndex();
+        if (selectedIndex < 0 || myVehicles == null) {
+            rateLabel.setText("");
+            return;
+        }
+
+        String vehicleType = myVehicles.get(selectedIndex).vehicleType;
+
+        new Thread(() -> {
+            try {
+                double rate = BookingApiService.getRate(vehicleType);
+                Platform.runLater(() -> rateLabel.setText("Rate: ₹" + rate + " / hour (minimum 1 hour)"));
+            } catch (Exception e) {
+                Platform.runLater(() -> rateLabel.setText(""));
             }
         }).start();
     }
@@ -112,7 +139,7 @@ public class BookSlotController implements Initializable {
         errorLabel.setText("");
     }
 
-        @FXML
+    @FXML
     private void handleBookSlot() {
         errorLabel.setText("");
         successLabel.setText("");
@@ -186,47 +213,83 @@ public class BookSlotController implements Initializable {
 
     @FXML
     private void goToDashboard() {
-        try { MainApp.switchScene("/fxml/dashboard.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/dashboard.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToProfile() {
-        try { MainApp.switchScene("/fxml/profile.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/profile.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToVehicles() {
-        try { MainApp.switchScene("/fxml/vehicles.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/vehicles.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToBookSlot() {
-        try { MainApp.switchScene("/fxml/book_slot.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/book_slot.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToMyBookings() {
-        try { MainApp.switchScene("/fxml/my_bookings.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/my_bookings.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToNotifications() {
-        try { MainApp.switchScene("/fxml/notifications.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/notifications.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void handleLogout() {
         SessionManager.clearSession();
-        try { MainApp.switchScene("/fxml/login.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/login.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToPayment() {
-        try { MainApp.switchScene("/fxml/payment.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/payment.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToSettings() {
-        try { MainApp.switchScene("/fxml/settings.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/settings.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 }

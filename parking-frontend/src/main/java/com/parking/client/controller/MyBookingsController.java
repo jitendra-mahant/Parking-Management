@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.collections.transformation.FilteredList;
 import javafx.util.Callback;
 
 import java.io.FileWriter;
@@ -22,21 +23,40 @@ import java.util.stream.Collectors;
 
 public class MyBookingsController implements Initializable {
 
-    @FXML private TableView<BookingApiService.BookingData> activeTable;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveSlot;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveVehicle;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveEntry;
-    @FXML private TableColumn<BookingApiService.BookingData, Void> colActiveAction;
+    @FXML
+    private TableView<BookingApiService.BookingData> activeTable;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, String> colActiveSlot;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, String> colActiveVehicle;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, String> colActiveEntry;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, Void> colActiveAction;
 
-    @FXML private TableView<BookingApiService.BookingData> historyTable;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colHistSlot;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colHistVehicle;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colHistStatus;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colHistFare;
-    @FXML private TableColumn<BookingApiService.BookingData, Void> colHistAction;
+    @FXML
+    private TableView<BookingApiService.BookingData> historyTable;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, String> colHistSlot;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, String> colHistVehicle;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, String> colHistStatus;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, String> colHistFare;
+    @FXML
+    private TableColumn<BookingApiService.BookingData, Void> colHistAction;
 
-    @FXML private Label errorLabel;
-    @FXML private Label successLabel;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private Label successLabel;
+
+    @FXML
+    private TextField historySearchField;
+
+    private final javafx.collections.ObservableList<BookingApiService.BookingData> allHistory
+            = javafx.collections.FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -53,10 +73,19 @@ public class MyBookingsController implements Initializable {
         addHistoryActionButton();
 
         loadBookings();
+        FilteredList<BookingApiService.BookingData> filteredHistory = new FilteredList<>(allHistory, b -> true);
+        historyTable.setItems(filteredHistory);
+
+        historySearchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            String query = newVal == null ? "" : newVal.trim().toLowerCase();
+            filteredHistory.setPredicate(b -> query.isEmpty() || b.vehicleNumber.toLowerCase().contains(query));
+        });
     }
 
     private String formatDateTime(String iso) {
-        if (iso == null) return "-";
+        if (iso == null) {
+            return "-";
+        }
         return iso.replace("T", " ").length() >= 16 ? iso.replace("T", " ").substring(0, 16) : iso;
     }
 
@@ -102,8 +131,8 @@ public class MyBookingsController implements Initializable {
                     private final Button receiptBtn = new Button("Download");
 
                     {
-                        receiptBtn.setStyle("-fx-font-size: 11px; -fx-padding: 5 12 5 12; -fx-min-width: 0; " +
-                                "-fx-background-color: #eef1f8; -fx-text-fill: #4361ee; -fx-effect: none;");
+                        receiptBtn.setStyle("-fx-font-size: 11px; -fx-padding: 5 12 5 12; -fx-min-width: 0; "
+                                + "-fx-background-color: #eef1f8; -fx-text-fill: #4361ee; -fx-effect: none;");
                         receiptBtn.setOnAction(e -> {
                             BookingApiService.BookingData b = getTableView().getItems().get(getIndex());
                             downloadReceipt(b);
@@ -136,7 +165,7 @@ public class MyBookingsController implements Initializable {
 
                 Platform.runLater(() -> {
                     activeTable.setItems(FXCollections.observableArrayList(active));
-                    historyTable.setItems(FXCollections.observableArrayList(history));
+                    allHistory.setAll(history);
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> errorLabel.setText("Failed to load bookings: " + e.getMessage()));
@@ -197,18 +226,18 @@ public class MyBookingsController implements Initializable {
             String userHome = System.getProperty("user.home");
             String filePath = Paths.get(userHome, "Downloads", fileName).toString();
 
-            String content = "PARKING MANAGEMENT SYSTEM - RECEIPT\n" +
-                    "=====================================\n" +
-                    "Booking ID: " + b.id + "\n" +
-                    "Customer: " + SessionManager.getName() + "\n" +
-                    "Vehicle: " + b.vehicleNumber + "\n" +
-                    "Slot: " + b.slotNumber + "\n" +
-                    "Entry Time: " + b.entryTime + "\n" +
-                    "Exit Time: " + (b.exitTime != null ? b.exitTime : "N/A") + "\n" +
-                    "Status: " + b.status + "\n" +
-                    "Fare: " + (b.fare != null ? "₹" + b.fare : "N/A") + "\n" +
-                    "=====================================\n" +
-                    "Thank you for using our parking service!";
+            String content = "PARKING MANAGEMENT SYSTEM - RECEIPT\n"
+                    + "=====================================\n"
+                    + "Booking ID: " + b.id + "\n"
+                    + "Customer: " + SessionManager.getName() + "\n"
+                    + "Vehicle: " + b.vehicleNumber + "\n"
+                    + "Slot: " + b.slotNumber + "\n"
+                    + "Entry Time: " + b.entryTime + "\n"
+                    + "Exit Time: " + (b.exitTime != null ? b.exitTime : "N/A") + "\n"
+                    + "Status: " + b.status + "\n"
+                    + "Fare: " + (b.fare != null ? "₹" + b.fare : "N/A") + "\n"
+                    + "=====================================\n"
+                    + "Thank you for using our parking service!";
 
             try (FileWriter writer = new FileWriter(filePath)) {
                 writer.write(content);
@@ -222,47 +251,83 @@ public class MyBookingsController implements Initializable {
 
     @FXML
     private void goToDashboard() {
-        try { MainApp.switchScene("/fxml/dashboard.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/dashboard.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToProfile() {
-        try { MainApp.switchScene("/fxml/profile.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/profile.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToVehicles() {
-        try { MainApp.switchScene("/fxml/vehicles.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/vehicles.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToBookSlot() {
-        try { MainApp.switchScene("/fxml/book_slot.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/book_slot.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToMyBookings() {
-        try { MainApp.switchScene("/fxml/my_bookings.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/my_bookings.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToPayment() {
-        try { MainApp.switchScene("/fxml/payment.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/payment.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToNotifications() {
-        try { MainApp.switchScene("/fxml/notifications.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/notifications.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void goToSettings() {
-        try { MainApp.switchScene("/fxml/settings.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/settings.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 
     @FXML
     private void handleLogout() {
         SessionManager.clearSession();
-        try { MainApp.switchScene("/fxml/login.fxml"); } catch (Exception e) { errorLabel.setText("Could not navigate"); }
+        try {
+            MainApp.switchScene("/fxml/login.fxml");
+        } catch (Exception e) {
+            errorLabel.setText("Could not navigate");
+        }
     }
 }

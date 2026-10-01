@@ -60,7 +60,7 @@
             </VBox>
 
             <!-- Management Sections -->
-                            <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
+                    <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
                     <Label styleClass="panel-title" text="Manage Staff"/>
                     <TextField fx:id="staffNameField" promptText="Name" maxWidth="Infinity"/>
                     <TextField fx:id="staffEmailField" promptText="Email" maxWidth="Infinity"/>
@@ -82,8 +82,9 @@
                 </VBox>
 
                 <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
-                    <Label styleClass="panel-title" text="All Bookings"/>
-                    <TableView fx:id="bookingsTable" prefHeight="330">
+    <Label styleClass="panel-title" text="All Bookings"/>
+    <TextField fx:id="bookingSearchField" promptText="Search by vehicle number..." maxWidth="Infinity"/>
+    <TableView fx:id="bookingsTable" prefHeight="330">
                         <columns>
                             <TableColumn fx:id="colBookSlot" text="Slot" prefWidth="70"/>
                             <TableColumn fx:id="colBookVehicle" text="Vehicle" prefWidth="120"/>
@@ -94,7 +95,10 @@
                             <Label text="No bookings yet"/>
                         </placeholder>
                     </TableView>
-                    <Button text="Refresh Bookings" onAction="#loadBookings" styleClass="admin-btn"/>
+                                        <HBox spacing="10">
+                        <Button text="Refresh Bookings" onAction="#loadBookings" styleClass="admin-btn"/>
+                        <Button text="Export to CSV" onAction="#handleExportCsv" styleClass="admin-btn"/>
+                    </HBox>
                 </VBox>
                 <Button text="🏠  Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn, sidebar-btn-admin-active" maxWidth="Infinity"/>
 <Button text="🚪  Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>

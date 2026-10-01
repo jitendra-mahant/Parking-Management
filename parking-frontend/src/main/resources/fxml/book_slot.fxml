@@ -43,8 +43,9 @@
             <!-- Step 1: Select Vehicle -->
             <VBox styleClass="panel-card" spacing="14">
                 <Label styleClass="panel-title" text="1. Select Vehicle"/>
-                <ComboBox fx:id="vehicleCombo" promptText="Choose your vehicle" maxWidth="340"/>
-                <Button text="Check Available Slots 🚗" onAction="#handleCheckSlots" styleClass="customer-btn"/>
+                <ComboBox fx:id="vehicleCombo" promptText="Choose your vehicle" maxWidth="320"/>
+<Label fx:id="rateLabel" style="-fx-text-fill: #4361ee; -fx-font-size: 12px; -fx-font-weight: bold;" text=""/>
+<Button text="Check Available Slots" onAction="#handleCheckSlots"/>
             </VBox>
 
             <!-- Step 2: Choose a Slot Grid -->
