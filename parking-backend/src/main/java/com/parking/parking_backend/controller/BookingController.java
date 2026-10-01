@@ -67,4 +67,10 @@ public class BookingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/rate")
+    public ResponseEntity<?> getRate(@RequestParam String vehicleType) {
+        return ResponseEntity.ok(java.util.Map.of("vehicleType", vehicleType,
+                "ratePerHour", com.parking.parking_backend.util.PricingConfig.getRateForType(vehicleType)));
+    }
 }

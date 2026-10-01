@@ -6,7 +6,7 @@ import com.parking.parking_backend.model.*;
 import com.parking.parking_backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.parking.parking_backend.util.PricingConfig;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,8 +29,6 @@ public class BookingService {
 
     @Autowired
     private NotificationService notificationService;
-
-    private static final double RATE_PER_HOUR = 20.0; // simple flat rate for now
 
     public List<Slot> getAvailableSlots(String vehicleType) {
         return slotRepository.findByVehicleTypeAndOccupiedFalse(vehicleType);
@@ -117,10 +115,11 @@ public class BookingService {
             throw new RuntimeException("Only active bookings can be completed");
         }
 
-        LocalDateTime exitTime = LocalDateTime.now();
+                LocalDateTime exitTime = LocalDateTime.now();
         long minutes = Duration.between(booking.getEntryTime(), exitTime).toMinutes();
         double hours = Math.max(1, Math.ceil(minutes / 60.0)); // minimum 1 hour charge
-        double fare = hours * RATE_PER_HOUR;
+        double rate = PricingConfig.getRateForType(booking.getVehicle().getVehicleType());
+        double fare = hours * rate;
 
         booking.setExitTime(exitTime);
         booking.setStatus("COMPLETED");
