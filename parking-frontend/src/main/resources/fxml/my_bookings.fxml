@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -38,17 +38,18 @@
             <Label styleClass="topbar-title" text="My Bookings"/>
             <Label styleClass="topbar-subtitle" text="Track active parking and view past history"/>
 
-            <VBox styleClass="panel-card" spacing="12">
+            <VBox styleClass="panel-card" spacing="10">
                 <TabPane prefHeight="360">
                     <Tab text="Active" closable="false">
                         <VBox spacing="10">
                             <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
                             <TableView fx:id="activeTable" prefHeight="280">
                                 <columns>
-                                    <TableColumn fx:id="colActiveSlot" text="Slot" prefWidth="90"/>
-                                    <TableColumn fx:id="colActiveVehicle" text="Vehicle" prefWidth="140"/>
-                                    <TableColumn fx:id="colActiveEntry" text="Entry Time" prefWidth="180"/>
-                                    <TableColumn fx:id="colActiveAction" text="Actions" prefWidth="200"/>
+                                    <TableColumn fx:id="colActiveSlot" text="Slot" prefWidth="70"/>
+                                    <TableColumn fx:id="colActiveVehicle" text="Vehicle" prefWidth="120"/>
+                                    <TableColumn fx:id="colActiveEntry" text="Entry Time" prefWidth="140"/>
+                                    <TableColumn fx:id="colActiveExpected" text="Expected Until" prefWidth="140"/>
+                                    <TableColumn fx:id="colActiveAction" text="Actions" prefWidth="250"/>
                                 </columns>
                                 <placeholder>
                                     <Label text="No active bookings right now"/>
@@ -57,16 +58,17 @@
                         </VBox>
                     </Tab>
                     <Tab text="History" closable="false">
-    <VBox spacing="10">
-        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-        <TextField fx:id="historySearchField" promptText="Search by vehicle number..." maxWidth="Infinity"/>
-        <TableView fx:id="historyTable" prefHeight="280">
+                        <VBox spacing="10">
+                            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                            <TextField fx:id="historySearchField" promptText="Search by vehicle number..." maxWidth="Infinity"/>
+                            <TableView fx:id="historyTable" prefHeight="250">
                                 <columns>
-                                    <TableColumn fx:id="colHistSlot" text="Slot" prefWidth="80"/>
-                                    <TableColumn fx:id="colHistVehicle" text="Vehicle" prefWidth="130"/>
-                                    <TableColumn fx:id="colHistStatus" text="Status" prefWidth="110"/>
-                                    <TableColumn fx:id="colHistFare" text="Fare" prefWidth="90"/>
-                                    <TableColumn fx:id="colHistAction" text="Receipt" prefWidth="110"/>
+                                    <TableColumn fx:id="colHistSlot" text="Slot" prefWidth="60"/>
+                                    <TableColumn fx:id="colHistVehicle" text="Vehicle" prefWidth="110"/>
+                                    <TableColumn fx:id="colHistStatus" text="Status" prefWidth="90"/>
+                                    <TableColumn fx:id="colHistFare" text="Fare" prefWidth="75"/>
+                                    <TableColumn fx:id="colHistRating" text="Rating" prefWidth="100"/>
+                                    <TableColumn fx:id="colHistAction" text="" prefWidth="190"/>
                                 </columns>
                                 <placeholder>
                                     <Label text="No booking history yet"/>
