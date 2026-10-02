@@ -137,16 +137,20 @@ public class BookingService {
         return toResponse(booking);
     }
 
-    private BookingResponse toResponse(Booking booking) {
-        return new BookingResponse(
+        private BookingResponse toResponse(Booking booking) {
+        BookingResponse response = new BookingResponse(
                 booking.getId(),
                 booking.getSlot().getSlotNumber(),
                 booking.getVehicle().getVehicleNumber(),
                 booking.getEntryTime(),
                 booking.getExitTime(),
                 booking.getStatus(),
-                booking.getFare()
+                booking.getFare(),
+                booking.getExpectedExitTime()
         );
+        response.setRating(booking.getRating());
+        response.setFeedback(booking.getFeedback());
+        return response;
     }
 
     public java.util.Map<String, Object> getMyStats(String email) {
@@ -164,5 +168,28 @@ public class BookingService {
         stats.put("activeBookings", activeBookings);
         stats.put("totalSpent", totalSpent);
         return stats;
+    }
+
+        public BookingResponse rateBooking(String email, Long bookingId, Integer rating, String feedback) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        if (!booking.getCustomer().getEmail().equals(email)) {
+            throw new RuntimeException("You are not authorized to rate this booking");
+        }
+
+        if (!booking.getStatus().equals("COMPLETED")) {
+            throw new RuntimeException("Only completed bookings can be rated");
+        }
+
+        if (rating == null || rating < 1 || rating > 5) {
+            throw new RuntimeException("Rating must be between 1 and 5");
+        }
+
+        booking.setRating(rating);
+        booking.setFeedback(feedback);
+        bookingRepository.save(booking);
+
+        return toResponse(booking);
     }
 }

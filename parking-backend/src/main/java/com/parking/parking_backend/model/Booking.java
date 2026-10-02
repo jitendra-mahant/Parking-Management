@@ -1,7 +1,16 @@
 package com.parking.parking_backend.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "bookings")
@@ -31,10 +40,21 @@ public class Booking {
     @Column(nullable = false)
     private String status; // "ACTIVE", "COMPLETED", "CANCELLED"
 
-    private Double fare; // calculated when booking completes
+        private Double fare; // calculated when booking completes
+
+    private LocalDateTime expectedExitTime;
+
+    private Integer rating;
+    private String feedback;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+        public Integer getRating() { return rating; }
+    public void setRating(Integer rating) { this.rating = rating; }
+
+    public String getFeedback() { return feedback; }
+    public void setFeedback(String feedback) { this.feedback = feedback; }
 
     public User getCustomer() { return customer; }
     public void setCustomer(User customer) { this.customer = customer; }
@@ -54,6 +74,9 @@ public class Booking {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public Double getFare() { return fare; }
+        public Double getFare() { return fare; }
     public void setFare(Double fare) { this.fare = fare; }
+
+    public LocalDateTime getExpectedExitTime() { return expectedExitTime; }
+    public void setExpectedExitTime(LocalDateTime expectedExitTime) { this.expectedExitTime = expectedExitTime; }
 }

@@ -73,4 +73,14 @@ public class BookingController {
         return ResponseEntity.ok(java.util.Map.of("vehicleType", vehicleType,
                 "ratePerHour", com.parking.parking_backend.util.PricingConfig.getRateForType(vehicleType)));
     }
+
+        @PutMapping("/{id}/rate")
+    public ResponseEntity<?> rateBooking(Authentication authentication, @PathVariable Long id,
+                                          @RequestBody com.parking.parking_backend.dto.RateBookingRequest request) {
+        try {
+            return ResponseEntity.ok(bookingService.rateBooking(authentication.getName(), id, request.getRating(), request.getFeedback()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

@@ -64,17 +64,23 @@ public class AdminService {
         userRepository.delete(staff);
     }
 
-    public List<BookingResponse> getAllBookings() {
+        public List<BookingResponse> getAllBookings() {
         return bookingRepository.findAll().stream()
-                .map(b -> new BookingResponse(
-                        b.getId(),
-                        b.getSlot().getSlotNumber(),
-                        b.getVehicle().getVehicleNumber(),
-                        b.getEntryTime(),
-                        b.getExitTime(),
-                        b.getStatus(),
-                        b.getFare()
-                ))
+                .map(b -> {
+                    BookingResponse response = new BookingResponse(
+                            b.getId(),
+                            b.getSlot().getSlotNumber(),
+                            b.getVehicle().getVehicleNumber(),
+                            b.getEntryTime(),
+                            b.getExitTime(),
+                            b.getStatus(),
+                            b.getFare(),
+                            b.getExpectedExitTime()
+                    );
+                    response.setRating(b.getRating());
+                    response.setFeedback(b.getFeedback());
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 

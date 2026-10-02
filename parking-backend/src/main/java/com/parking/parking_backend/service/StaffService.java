@@ -109,16 +109,20 @@ public class StaffService {
         return slotRepository.findAll();
     }
 
-    private BookingResponse toResponse(Booking booking) {
-        return new BookingResponse(
+        private BookingResponse toResponse(Booking booking) {
+        BookingResponse response = new BookingResponse(
                 booking.getId(),
                 booking.getSlot().getSlotNumber(),
                 booking.getVehicle().getVehicleNumber(),
                 booking.getEntryTime(),
                 booking.getExitTime(),
                 booking.getStatus(),
-                booking.getFare()
+                booking.getFare(),
+                booking.getExpectedExitTime()
         );
+        response.setRating(booking.getRating());
+        response.setFeedback(booking.getFeedback());
+        return response;
     }
 
     public java.util.Map<String, Object> getQuickStats() {
