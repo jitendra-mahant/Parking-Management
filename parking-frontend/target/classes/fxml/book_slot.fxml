@@ -6,59 +6,56 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx" 
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.parking.client.controller.BookSlotController"
-            stylesheets="@../css/dashboard.css"
-            styleClass="main-layout">
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.parking.client.controller.BookSlotController">
 
     <left>
-        <VBox styleClass="sidebar" prefWidth="250">
-            <Label text="🅿️ Parking System" styleClass="sidebar-brand"/>
-            <VBox spacing="6" VBox.vgrow="ALWAYS">
-                <Button text="Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn" maxWidth="Infinity"/>
-                <Button text="My Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity"/>
-                <Button text="My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
-                <Button text="Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
-                <Button text="My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
-                <Button text="Payments" onAction="#goToPayment" styleClass="sidebar-btn" maxWidth="Infinity"/>
-                <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
-                <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            </VBox>
-            <Button text="Logout" onAction="#handleLogout" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity"/>
+        <VBox styleClass="sidebar">
+            <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 18 12;">
+                <Label text="🅿" style="-fx-font-size: 18px; -fx-text-fill: #2563eb;"/>
+                <Label text="ParkEase" style="-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: #1e293b;"/>
+            </HBox>
+            <Button text="🏠  Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="👤  My Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="🚗  My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="🅿️  Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
+            <Button text="📋  My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="💳  Payments" onAction="#goToPayment" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="🔔  Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="⚙️  Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="🚪  Logout" onAction="#handleLogout" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity"/>
         </VBox>
     </left>
 
     <center>
-        <VBox alignment="TOP_LEFT" spacing="20" styleClass="content-area">
+        <VBox alignment="TOP_LEFT" spacing="18" styleClass="content-area">
             <padding>
-                <Insets top="28" right="36" bottom="28" left="36"/>
+                <Insets top="24" right="30" bottom="24" left="30"/>
             </padding>
 
             <Label styleClass="topbar-title" text="Book a Parking Slot"/>
-            <Label styleClass="topbar-subtitle" text="Sunrise Parking Complex - Select your vehicle, then tap a green slot"/>
+            <Label styleClass="topbar-subtitle" text="Select your vehicle, then tap a green slot to reserve it"/>
 
-            <!-- Step 1: Select Vehicle -->
             <VBox styleClass="panel-card" spacing="14">
                 <Label styleClass="panel-title" text="1. Select Vehicle"/>
                 <ComboBox fx:id="vehicleCombo" promptText="Choose your vehicle" maxWidth="320"/>
-<Label fx:id="rateLabel" style="-fx-text-fill: #4361ee; -fx-font-size: 12px; -fx-font-weight: bold;" text=""/>
-<Button text="Check Available Slots" onAction="#handleCheckSlots"/>
+                <Label fx:id="rateLabel" style="-fx-text-fill: #2563eb; -fx-font-size: 12px; -fx-font-weight: bold;" text=""/>
+                <Button text="Check Available Slots" onAction="#handleCheckSlots"/>
             </VBox>
 
-            <!-- Step 2: Choose a Slot Grid -->
             <VBox styleClass="panel-card" spacing="14">
                 <Label styleClass="panel-title" text="2. Choose a Slot"/>
                 <FlowPane fx:id="slotGridPane" styleClass="slot-grid"/>
 
-                <Label fx:id="errorLabel" style="-fx-text-fill: #dc2626; -fx-font-weight: bold;" text=""/>
-                <Label fx:id="successLabel" style="-fx-text-fill: #16a34a; -fx-font-weight: bold;" text=""/>
+                <Label fx:id="errorLabel" style="-fx-text-fill: #dc2626;" text=""/>
+                <Label fx:id="successLabel" style="-fx-text-fill: #15803d;" text=""/>
 
-                <Button text="Book Selected Slot ➔" onAction="#handleBookSlot" styleClass="customer-btn"/>
+                <Button fx:id="bookButton" text="Book Selected Slot" onAction="#handleBookSlot" styleClass="customer-btn"/>
             </VBox>
-<Button fx:id="bookButton" text="Book Selected Slot" onAction="#handleBookSlot" styleClass="customer-btn"/>
+
         </VBox>
     </center>
 

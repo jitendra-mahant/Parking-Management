@@ -23,6 +23,7 @@ D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\VerifyOtpController.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\util\SessionManager.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\ResetPasswordController.java
+D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\util\QrCodeGenerator.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\service\VehicleApiService.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\controller\VehicleController.java
 D:\Codes\Projects\parking-management\parking-frontend\src\main\java\com\parking\client\service\NotificationApiService.java

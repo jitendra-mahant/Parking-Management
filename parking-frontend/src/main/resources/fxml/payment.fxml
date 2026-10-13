@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
@@ -14,16 +15,19 @@
 
     <left>
         <VBox styleClass="sidebar">
-            <Label text="Parking System"/>
-            <Button text="Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="My Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="Payments" onAction="#goToPayment" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
-            <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="Logout" onAction="#handleLogout" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 18 12;">
+                <Label text="🅿" style="-fx-font-size: 18px; -fx-text-fill: #2563eb;"/>
+                <Label text="ParkEase" style="-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: #1e293b;"/>
+            </HBox>
+            <Button text="🏠  Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="👤  My Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="🚗  My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="🅿️  Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="📋  My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="💳  Payments" onAction="#goToPayment" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
+            <Button text="🔔  Notifications" onAction="#goToNotifications" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="⚙️  Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button text="🚪  Logout" onAction="#handleLogout" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity"/>
         </VBox>
     </left>
 
@@ -57,7 +61,7 @@
 
                 <Button text="Save Payment Method (Demo)" onAction="#handleSaveCard" styleClass="customer-btn"/>
 
-                <Label fx:id="statusLabel" style="-fx-text-fill: #2ecc71;" text=""/>
+                <Label fx:id="statusLabel" style="-fx-text-fill: #15803d;" text=""/>
             </VBox>
 
         </VBox>

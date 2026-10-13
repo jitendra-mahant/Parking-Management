@@ -18,12 +18,12 @@ public class StaffApiService {
         body.addProperty("vehicleType", vehicleType);
 
         String response = ApiClient.post("/staff/entry", gson.toJson(body));
-        return parseBooking(gson.fromJson(response, JsonObject.class));
+        return BookingApiService.parseBooking(gson.fromJson(response, JsonObject.class));
     }
 
     public static BookingApiService.BookingData recordExit(Long bookingId) throws IOException {
         String response = ApiClient.put("/staff/exit/" + bookingId, "{}");
-        return parseBooking(gson.fromJson(response, JsonObject.class));
+        return BookingApiService.parseBooking(gson.fromJson(response, JsonObject.class));
     }
 
     public static List<BookingApiService.BookingData> getAllActiveBookings() throws IOException {
@@ -32,7 +32,7 @@ public class StaffApiService {
 
         List<BookingApiService.BookingData> bookings = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
-            bookings.add(parseBooking(array.get(i).getAsJsonObject()));
+            bookings.add(BookingApiService.parseBooking(array.get(i).getAsJsonObject()));
         }
         return bookings;
     }
@@ -54,15 +54,17 @@ public class StaffApiService {
         return slots;
     }
 
-    private static BookingApiService.BookingData parseBooking(JsonObject obj) {
-        return new BookingApiService.BookingData(
-                obj.get("id").getAsLong(),
-                obj.get("slotNumber").getAsString(),
-                obj.get("vehicleNumber").getAsString(),
-                obj.get("entryTime").getAsString(),
-                obj.has("exitTime") && !obj.get("exitTime").isJsonNull() ? obj.get("exitTime").getAsString() : null,
-                obj.get("status").getAsString(),
-                obj.has("fare") && !obj.get("fare").isJsonNull() ? obj.get("fare").getAsDouble() : null
+    public static QuickStats getQuickStats() throws IOException {
+        String response = ApiClient.get("/staff/quick-stats");
+        JsonObject obj = gson.fromJson(response, JsonObject.class);
+
+        return new QuickStats(
+                obj.get("totalSlots").getAsLong(),
+                obj.get("occupiedSlots").getAsLong(),
+                obj.get("availableSlots").getAsLong(),
+                obj.get("todayEntries").getAsLong(),
+                obj.get("todayExits").getAsLong(),
+                obj.has("overstayCount") && !obj.get("overstayCount").isJsonNull() ? obj.get("overstayCount").getAsLong() : 0L
         );
     }
 
@@ -79,18 +81,6 @@ public class StaffApiService {
             this.occupied = occupied;
         }
     }
-    public static QuickStats getQuickStats() throws IOException {
-        String response = ApiClient.get("/staff/quick-stats");
-        JsonObject obj = gson.fromJson(response, JsonObject.class);
-
-        return new QuickStats(
-                obj.get("totalSlots").getAsLong(),
-                obj.get("occupiedSlots").getAsLong(),
-                obj.get("availableSlots").getAsLong(),
-                obj.get("todayEntries").getAsLong(),
-                obj.get("todayExits").getAsLong()
-        );
-    }
 
     public static class QuickStats {
         public long totalSlots;
@@ -98,13 +88,15 @@ public class StaffApiService {
         public long availableSlots;
         public long todayEntries;
         public long todayExits;
+        public long overstayCount;
 
-        public QuickStats(long totalSlots, long occupiedSlots, long availableSlots, long todayEntries, long todayExits) {
+        public QuickStats(long totalSlots, long occupiedSlots, long availableSlots, long todayEntries, long todayExits, long overstayCount) {
             this.totalSlots = totalSlots;
             this.occupiedSlots = occupiedSlots;
             this.availableSlots = availableSlots;
             this.todayEntries = todayEntries;
             this.todayExits = todayExits;
+            this.overstayCount = overstayCount;
         }
     }
 }

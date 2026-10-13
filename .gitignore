@@ -1,0 +1,9 @@
+# Generated runtime files
+parking-frontend/ParkingManagement/runtime/
+
+# Java build output
+parking-frontend/target/
+**/target/
+
+# Dependencies
+node_modules/

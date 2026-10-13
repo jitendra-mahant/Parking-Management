@@ -12,15 +12,17 @@ com\parking\client\controller\AdminDashboardController$1$1.class
 com\parking\client\service\VehicleApiService$VehicleData.class
 com\parking\client\controller\SettingsController.class
 com\parking\client\controller\SignupController.class
+com\parking\client\controller\StaffDashboardController$2.class
 com\parking\client\service\BookingApiService$SlotData.class
 com\parking\client\service\ProfileApiService$ProfileData.class
-com\parking\client\controller\StaffDashboardController$1$1.class
 com\parking\client\controller\VehicleController$1.class
 com\parking\client\Launcher.class
 com\parking\client\controller\NotificationsController$3.class
+com\parking\client\service\AdminApiService$DailyRevenueData.class
 com\parking\client\service\BookingApiService$BookingData.class
 com\parking\client\service\AuthApiService.class
 com\parking\client\util\SessionManager.class
+com\parking\client\util\QrCodeGenerator.class
 com\parking\client\controller\MyBookingsController$1$1.class
 com\parking\client\controller\VehicleController$1$1.class
 com\parking\client\service\StaffApiService$QuickStats.class
@@ -28,6 +30,7 @@ com\parking\client\controller\ProfileController.class
 com\parking\client\MainApp.class
 com\parking\client\controller\VerifyOtpController.class
 com\parking\client\controller\StaffDashboardController.class
+com\parking\client\controller\StaffDashboardController$3.class
 com\parking\client\controller\ForgotPasswordController.class
 com\parking\client\controller\MyBookingsController$1.class
 com\parking\client\controller\AdminDashboardController.class
@@ -43,6 +46,7 @@ com\parking\client\controller\NotificationsController$2$1.class
 com\parking\client\service\NotificationApiService.class
 com\parking\client\controller\AdminDashboardController$1.class
 com\parking\client\service\StaffApiService.class
+com\parking\client\controller\StaffDashboardController$2$1.class
 com\parking\client\controller\BookSlotController.class
 com\parking\client\controller\MyBookingsController$2.class
 com\parking\client\controller\NotificationsController$2.class

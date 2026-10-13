@@ -1,12 +1,12 @@
 package com.parking.client.service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 public class AdminApiService {
 
@@ -49,16 +49,7 @@ public class AdminApiService {
 
         List<BookingApiService.BookingData> bookings = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
-            JsonObject obj = array.get(i).getAsJsonObject();
-            bookings.add(new BookingApiService.BookingData(
-                    obj.get("id").getAsLong(),
-                    obj.get("slotNumber").getAsString(),
-                    obj.get("vehicleNumber").getAsString(),
-                    obj.get("entryTime").getAsString(),
-                    obj.has("exitTime") && !obj.get("exitTime").isJsonNull() ? obj.get("exitTime").getAsString() : null,
-                    obj.get("status").getAsString(),
-                    obj.has("fare") && !obj.get("fare").isJsonNull() ? obj.get("fare").getAsDouble() : null
-            ));
+            bookings.add(BookingApiService.parseBooking(array.get(i).getAsJsonObject()));
         }
         return bookings;
     }
@@ -73,6 +64,18 @@ public class AdminApiService {
                 obj.get("completedBookings").getAsLong(),
                 obj.get("totalRevenue").getAsDouble()
         );
+    }
+
+    public static List<DailyRevenueData> getRevenueChart() throws IOException {
+        String response = ApiClient.get("/admin/revenue-chart");
+        JsonArray array = gson.fromJson(response, JsonArray.class);
+
+        List<DailyRevenueData> list = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            JsonObject obj = array.get(i).getAsJsonObject();
+            list.add(new DailyRevenueData(obj.get("date").getAsString(), obj.get("revenue").getAsDouble()));
+        }
+        return list;
     }
 
     public static class StaffData {
@@ -100,6 +103,16 @@ public class AdminApiService {
             this.activeBookings = activeBookings;
             this.completedBookings = completedBookings;
             this.totalRevenue = totalRevenue;
+        }
+    }
+
+    public static class DailyRevenueData {
+        public String date;
+        public double revenue;
+
+        public DailyRevenueData(String date, double revenue) {
+            this.date = date;
+            this.revenue = revenue;
         }
     }
 }

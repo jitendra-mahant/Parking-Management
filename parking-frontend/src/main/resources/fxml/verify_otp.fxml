@@ -10,16 +10,19 @@
 
 <StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.parking.client.controller.VerifyOtpController"
-           style="-fx-background-color: #f0f2f7;">
+           style="-fx-background-color: #f8fafc;">
 
     <VBox alignment="CENTER" spacing="16" styleClass="auth-card" maxWidth="380">
         <padding>
             <Insets top="10" bottom="10"/>
         </padding>
 
-        <HBox styleClass="brand-badge" alignment="CENTER">
-            <Label text="P"/>
-        </HBox>
+        <VBox alignment="CENTER" spacing="8">
+            <HBox styleClass="brand-badge" alignment="CENTER">
+                <Label text="🅿" styleClass="brand-icon"/>
+            </HBox>
+            <Label text="ParkEase" styleClass="brand-wordmark"/>
+        </VBox>
 
         <Label text="Verify OTP" styleClass="auth-title"/>
         <Label fx:id="infoLabel" text="Enter the 6-digit code sent to your email" styleClass="auth-subtitle" wrapText="true"/>
@@ -29,7 +32,7 @@
             <TextField fx:id="otpField" promptText="6-digit code" maxWidth="Infinity"/>
         </VBox>
 
-        <Label fx:id="errorLabel" style="-fx-text-fill: #e74c3c; -fx-font-size: 12px;" text="" wrapText="true"/>
+        <Label fx:id="errorLabel" style="-fx-text-fill: #dc2626; -fx-font-size: 12px;" text="" wrapText="true"/>
 
         <Button text="Verify OTP" onAction="#handleVerifyOtp" maxWidth="Infinity"/>
 

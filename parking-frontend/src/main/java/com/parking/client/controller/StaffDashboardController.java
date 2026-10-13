@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
@@ -27,6 +28,7 @@ public class StaffDashboardController implements Initializable {
     @FXML private Label availableSlotsLabel;
     @FXML private Label todayEntriesLabel;
     @FXML private Label todayExitsLabel;
+    @FXML private Label overstayLabel;
 
     @FXML private VBox slotGridPane;
 
@@ -38,6 +40,7 @@ public class StaffDashboardController implements Initializable {
     @FXML private TableColumn<BookingApiService.BookingData, String> colStaffSlot;
     @FXML private TableColumn<BookingApiService.BookingData, String> colStaffVehicle;
     @FXML private TableColumn<BookingApiService.BookingData, String> colStaffEntry;
+    @FXML private TableColumn<BookingApiService.BookingData, Void> colStaffStatus;
     @FXML private TableColumn<BookingApiService.BookingData, Void> colStaffAction;
 
     @FXML private Label exitStatusLabel;
@@ -52,14 +55,34 @@ public class StaffDashboardController implements Initializable {
         colStaffSlot.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().slotNumber));
         colStaffVehicle.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().vehicleNumber));
         colStaffEntry.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(d.getValue().entryTime)));
+        addStatusColumn();
         addExitButtonColumn();
+        addOverstayRowHighlight();
 
         refreshAll();
     }
 
     private String formatDateTime(String iso) {
         if (iso == null) return "-";
-        return iso.replace("T", " ").length() >= 16 ? iso.replace("T", " ").substring(0, 16) : iso;
+        String cleaned = iso.replace("T", " ");
+        return cleaned.length() >= 16 ? cleaned.substring(0, 16) : cleaned;
+    }
+
+    private void addStatusColumn() {
+        colStaffStatus.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
+                    setGraphic(null);
+                    return;
+                }
+                BookingApiService.BookingData b = getTableView().getItems().get(getIndex());
+                Label badge = new Label(b.overstay ? "Overstay" : "On Time");
+                badge.getStyleClass().add(b.overstay ? "status-badge-overstay" : "status-badge-ontime");
+                setGraphic(badge);
+            }
+        });
     }
 
     private void addExitButtonColumn() {
@@ -88,6 +111,19 @@ public class StaffDashboardController implements Initializable {
         });
     }
 
+    private void addOverstayRowHighlight() {
+        activeBookingsTable.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(BookingApiService.BookingData item, boolean empty) {
+                super.updateItem(item, empty);
+                getStyleClass().remove("table-row-overstay");
+                if (item != null && !empty && item.overstay) {
+                    getStyleClass().add("table-row-overstay");
+                }
+            }
+        });
+    }
+
     @FXML
     private void refreshAll() {
         loadQuickStats();
@@ -105,6 +141,7 @@ public class StaffDashboardController implements Initializable {
                     availableSlotsLabel.setText(String.valueOf(stats.availableSlots));
                     todayEntriesLabel.setText(String.valueOf(stats.todayEntries));
                     todayExitsLabel.setText(String.valueOf(stats.todayExits));
+                    overstayLabel.setText(String.valueOf(stats.overstayCount));
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> exitStatusLabel.setText("Failed to load stats: " + e.getMessage()));
@@ -196,8 +233,8 @@ public class StaffDashboardController implements Initializable {
             try {
                 BookingApiService.BookingData result = StaffApiService.recordExit(booking.id);
                 Platform.runLater(() -> {
-                    exitStatusLabel.setText("Exit recorded. Fare: ₹" + result.fare);
                     refreshAll();
+                    exitStatusLabel.setText("Exit recorded. Fare: ₹" + result.fare);
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> exitStatusLabel.setText("Failed: " + e.getMessage()));
