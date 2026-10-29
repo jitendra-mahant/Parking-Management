@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.shape.SVGPath;
 
 public class LoginController {
 
@@ -20,15 +21,78 @@ public class LoginController {
     private PasswordField passwordField;
 
     @FXML
+    private TextField passwordVisibleField;
+
+    @FXML
+    private Button togglePasswordBtn;
+
+    @FXML
+    private SVGPath eyeIcon;
+
+    @FXML
     private Label errorLabel;
 
-        @FXML
+    @FXML
     private Button loginButton;
 
-        @FXML
+    private boolean isPasswordVisible = false;
+
+    // Standard SVG Eye Path definitions (show / hide)
+    private static final String EYE_SHOW = "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z";
+    private static final String EYE_HIDE = "M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24 M1 1l22 22";
+
+    @FXML
+    public void initialize() {
+        if (passwordField != null && passwordVisibleField != null) {
+            passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (!isPasswordVisible && newVal != null && !newVal.equals(passwordVisibleField.getText())) {
+                    passwordVisibleField.setText(newVal);
+                }
+            });
+            passwordVisibleField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (isPasswordVisible && newVal != null && !newVal.equals(passwordField.getText())) {
+                    passwordField.setText(newVal);
+                }
+            });
+        }
+    }
+
+    @FXML
+    private void togglePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible;
+        if (isPasswordVisible) {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordField.setVisible(false);
+            passwordField.setManaged(false);
+            passwordVisibleField.setVisible(true);
+            passwordVisibleField.setManaged(true);
+            if (eyeIcon != null) {
+                eyeIcon.setContent(EYE_HIDE);
+                eyeIcon.setStyle("-fx-fill: transparent; -fx-stroke: #0F9D8A; -fx-stroke-width: 1.6; -fx-stroke-line-cap: round; -fx-stroke-line-join: round;");
+            }
+            passwordVisibleField.requestFocus();
+            passwordVisibleField.positionCaret(passwordVisibleField.getText().length());
+        } else {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordVisibleField.setVisible(false);
+            passwordVisibleField.setManaged(false);
+            passwordField.setVisible(true);
+            passwordField.setManaged(true);
+            if (eyeIcon != null) {
+                eyeIcon.setContent(EYE_SHOW);
+                eyeIcon.setStyle("-fx-fill: transparent; -fx-stroke: #64748B; -fx-stroke-width: 1.6; -fx-stroke-line-cap: round; -fx-stroke-line-join: round;");
+            }
+            passwordField.requestFocus();
+            passwordField.positionCaret(passwordField.getText().length());
+        }
+    }
+
+    @FXML
     private void handleLogin() {
-        String email = emailField.getText();
-        String password = passwordField.getText();
+        String email = emailField.getText() != null ? emailField.getText().trim() : "";
+        String password = isPasswordVisible
+                ? (passwordVisibleField.getText() != null ? passwordVisibleField.getText() : "")
+                : (passwordField.getText() != null ? passwordField.getText() : "");
 
         if (email.isEmpty() || password.isEmpty()) {
             errorLabel.setText("Please enter both email and password");
@@ -47,16 +111,16 @@ public class LoginController {
 
                 Platform.runLater(() -> {
                     try {
-                        if (result.role.equals("staff")) {
+                        if ("staff".equalsIgnoreCase(result.role)) {
                             MainApp.switchScene("/fxml/staff_dashboard.fxml");
-                        } else if (result.role.equals("admin")) {
+                        } else if ("admin".equalsIgnoreCase(result.role)) {
                             MainApp.switchScene("/fxml/admin_dashboard.fxml");
                         } else {
                             MainApp.switchScene("/fxml/dashboard.fxml");
                         }
                     } catch (Exception e) {
                         loginButton.setDisable(false);
-                        loginButton.setText("Log In");
+                        loginButton.setText("Sign In to Dashboard");
                         errorLabel.setText("Login succeeded but dashboard failed to load: " + e.getMessage());
                     }
                 });
@@ -64,14 +128,12 @@ public class LoginController {
             } catch (Exception e) {
                 Platform.runLater(() -> {
                     loginButton.setDisable(false);
-                    loginButton.setText("Log In");
+                    loginButton.setText("Sign In to Dashboard");
                     errorLabel.setText("Login failed: " + e.getMessage());
                 });
             }
         }).start();
     }
-
-    
 
     @FXML
     private void goToSignup() {

@@ -7,3 +7,6 @@ parking-frontend/target/
 
 # Dependencies
 node_modules/
+# Generated build output
+**/target/
+

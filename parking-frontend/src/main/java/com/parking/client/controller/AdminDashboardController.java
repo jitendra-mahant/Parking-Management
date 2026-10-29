@@ -26,7 +26,15 @@ public class AdminDashboardController implements Initializable {
 
     @FXML private Label welcomeLabel;
     @FXML private Label avatarLabel;
+    @FXML private Label sidebarUserName;
+    @FXML private Label sidebarUserRole;
+
+    @FXML private Label totalRevenueKpi;
+    @FXML private Label totalBookingsKpi;
+    @FXML private Label activeBookingsKpi;
+    @FXML private Label completedBookingsKpi;
     @FXML private Label revenueLabel;
+
     @FXML private BarChart<String, Number> revenueChart;
 
     @FXML private TextField staffNameField;
@@ -42,43 +50,112 @@ public class AdminDashboardController implements Initializable {
     @FXML private TableColumn<AdminApiService.StaffData, Void> colStaffDelete;
 
     @FXML private TextField bookingSearchField;
+    @FXML private ComboBox<String> bookingStatusFilterCombo;
     @FXML private TableView<BookingApiService.BookingData> bookingsTable;
     @FXML private TableColumn<BookingApiService.BookingData, String> colBookSlot;
     @FXML private TableColumn<BookingApiService.BookingData, String> colBookVehicle;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colBookStatus;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colBookCheckIn;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colBookCheckOut;
+    @FXML private TableColumn<BookingApiService.BookingData, Void> colBookStatus;
     @FXML private TableColumn<BookingApiService.BookingData, String> colBookFare;
 
     private final ObservableList<BookingApiService.BookingData> allBookings = FXCollections.observableArrayList();
+    private FilteredList<BookingApiService.BookingData> filteredBookings;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         String name = SessionManager.getName();
-        welcomeLabel.setText("Admin Dashboard - " + name);
-        avatarLabel.setText(name != null && !name.isEmpty() ? name.substring(0, 1).toUpperCase() : "A");
+        String role = SessionManager.getRole();
+        if (name == null || name.isEmpty()) name = "Administrator";
+        if (role == null || role.isEmpty()) role = "admin";
 
+        welcomeLabel.setText("System Administration Console — " + name);
+        if (sidebarUserName != null) sidebarUserName.setText(name);
+        if (sidebarUserRole != null) sidebarUserRole.setText("SYSTEM ADMIN");
+        avatarLabel.setText(name.substring(0, 1).toUpperCase());
+
+        // Setup Staff Table
         colStaffName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().name));
         colStaffEmail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().email));
         colStaffPhone.setCellValueFactory(d -> new SimpleStringProperty(
                 d.getValue().phone == null || d.getValue().phone.isEmpty() ? "-" : d.getValue().phone));
         addStaffDeleteButton();
 
+        // Setup Bookings Table
         colBookSlot.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().slotNumber));
         colBookVehicle.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().vehicleNumber));
-        colBookStatus.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().status));
+        if (colBookCheckIn != null) {
+            colBookCheckIn.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(d.getValue().entryTime)));
+        }
+        if (colBookCheckOut != null) {
+            colBookCheckOut.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(
+                    d.getValue().exitTime != null ? d.getValue().exitTime : d.getValue().expectedExitTime)));
+        }
         colBookFare.setCellValueFactory(d -> new SimpleStringProperty(
-                d.getValue().fare != null ? "₹" + d.getValue().fare : "-"));
+                d.getValue().fare != null ? "₹" + String.format("%.2f", d.getValue().fare) :
+                (d.getValue().estimatedFare != null ? "₹" + String.format("%.2f", d.getValue().estimatedFare) : "-")));
 
-        FilteredList<BookingApiService.BookingData> filtered = new FilteredList<>(allBookings, b -> true);
-        bookingsTable.setItems(filtered);
+        addBookingStatusColumn();
 
-        bookingSearchField.textProperty().addListener((obs, oldVal, newVal) -> {
-            String query = newVal == null ? "" : newVal.trim().toLowerCase();
-            filtered.setPredicate(b -> query.isEmpty() || b.vehicleNumber.toLowerCase().contains(query));
-        });
+        filteredBookings = new FilteredList<>(allBookings, b -> true);
+        bookingsTable.setItems(filteredBookings);
+
+        if (bookingStatusFilterCombo != null) {
+            bookingStatusFilterCombo.setItems(FXCollections.observableArrayList("All Statuses", "ACTIVE", "COMPLETED", "CANCELLED"));
+            bookingStatusFilterCombo.setValue("All Statuses");
+            bookingStatusFilterCombo.setOnAction(e -> applyBookingFilters());
+        }
+
+        bookingSearchField.textProperty().addListener((obs, oldVal, newVal) -> applyBookingFilters());
 
         loadRevenue();
         loadStaff();
         loadBookings();
+    }
+
+    private String formatDateTime(String iso) {
+        if (iso == null) return "-";
+        String cleaned = iso.replace("T", " ");
+        return cleaned.length() >= 16 ? cleaned.substring(0, 16) : cleaned;
+    }
+
+    private void applyBookingFilters() {
+        String query = bookingSearchField.getText() != null ? bookingSearchField.getText().trim().toLowerCase() : "";
+        String status = bookingStatusFilterCombo != null ? bookingStatusFilterCombo.getValue() : "All Statuses";
+
+        filteredBookings.setPredicate(b -> {
+            boolean matchesQuery = query.isEmpty()
+                    || (b.vehicleNumber != null && b.vehicleNumber.toLowerCase().contains(query))
+                    || (b.slotNumber != null && b.slotNumber.toLowerCase().contains(query));
+
+            boolean matchesStatus = status == null || "All Statuses".equalsIgnoreCase(status)
+                    || (b.status != null && b.status.equalsIgnoreCase(status));
+
+            return matchesQuery && matchesStatus;
+        });
+    }
+
+    private void addBookingStatusColumn() {
+        colBookStatus.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
+                    setGraphic(null);
+                    return;
+                }
+                BookingApiService.BookingData b = getTableView().getItems().get(getIndex());
+                Label badge = new Label(b.status != null ? b.status : "ACTIVE");
+                if ("COMPLETED".equalsIgnoreCase(b.status)) {
+                    badge.getStyleClass().add("status-badge-completed");
+                } else if ("CANCELLED".equalsIgnoreCase(b.status)) {
+                    badge.getStyleClass().add("status-badge-overstay");
+                } else {
+                    badge.getStyleClass().add("status-badge-ontime");
+                }
+                setGraphic(badge);
+            }
+        });
     }
 
     private void addStaffDeleteButton() {
@@ -108,12 +185,10 @@ public class AdminDashboardController implements Initializable {
 
     private void confirmAndRemove(AdminApiService.StaffData staff) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Remove Staff");
+        confirm.setTitle("Remove Staff Member");
         confirm.setHeaderText(null);
-        confirm.setContentText("Remove staff member " + staff.name + " (" + staff.email + ")?");
-        confirm.getDialogPane().getStylesheets().add(
-                MainApp.class.getResource("/css/styles.css").toExternalForm()
-        );
+        confirm.setContentText("Are you sure you want to remove staff operator " + staff.name + " (" + staff.email + ")?");
+        confirm.getDialogPane().getStylesheets().add(MainApp.class.getResource("/css/styles.css").toExternalForm());
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -122,10 +197,14 @@ public class AdminDashboardController implements Initializable {
                         AdminApiService.deleteStaff(staff.id);
                         Platform.runLater(() -> {
                             loadStaff();
-                            staffStatusLabel.setText("Staff removed");
+                            staffStatusLabel.setStyle("-fx-text-fill: #21865B; -fx-font-weight: bold;");
+                            staffStatusLabel.setText("Staff member " + staff.name + " removed successfully.");
                         });
                     } catch (Exception e) {
-                        Platform.runLater(() -> staffStatusLabel.setText("Failed: " + e.getMessage()));
+                        Platform.runLater(() -> {
+                            staffStatusLabel.setStyle("-fx-text-fill: #D64545; -fx-font-weight: bold;");
+                            staffStatusLabel.setText("Removal failed: " + e.getMessage());
+                        });
                     }
                 }).start();
             }
@@ -133,16 +212,21 @@ public class AdminDashboardController implements Initializable {
     }
 
     @FXML
-    private void loadRevenue() {
+    public void loadRevenue() {
         new Thread(() -> {
             try {
                 AdminApiService.RevenueData data = AdminApiService.getRevenueReport();
-                Platform.runLater(() -> revenueLabel.setText(
-                        "Total: " + data.totalBookings + " | Active: " + data.activeBookings +
-                        " | Completed: " + data.completedBookings + " | Revenue: ₹" + data.totalRevenue
-                ));
+                Platform.runLater(() -> {
+                    if (totalRevenueKpi != null) totalRevenueKpi.setText("₹" + String.format("%.2f", data.totalRevenue));
+                    if (totalBookingsKpi != null) totalBookingsKpi.setText(String.valueOf(data.totalBookings));
+                    if (activeBookingsKpi != null) activeBookingsKpi.setText(String.valueOf(data.activeBookings));
+                    if (completedBookingsKpi != null) completedBookingsKpi.setText(String.valueOf(data.completedBookings));
+                    if (revenueLabel != null) revenueLabel.setText("Total Revenue: ₹" + String.format("%.2f", data.totalRevenue) + " | Completed Sessions: " + data.completedBookings);
+                });
             } catch (Exception e) {
-                Platform.runLater(() -> revenueLabel.setText("Failed to load revenue: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    if (revenueLabel != null) revenueLabel.setText("Revenue data unavailable: " + e.getMessage());
+                });
             }
         }).start();
 
@@ -154,15 +238,18 @@ public class AdminDashboardController implements Initializable {
             try {
                 List<AdminApiService.DailyRevenueData> data = AdminApiService.getRevenueChart();
                 Platform.runLater(() -> {
+                    revenueChart.getData().clear();
                     XYChart.Series<String, Number> series = new XYChart.Series<>();
+                    series.setName("Daily Collections");
                     for (AdminApiService.DailyRevenueData d : data) {
                         series.getData().add(new XYChart.Data<>(d.date, d.revenue));
                     }
-                    revenueChart.getData().clear();
                     revenueChart.getData().add(series);
                 });
             } catch (Exception e) {
-                Platform.runLater(() -> staffStatusLabel.setText("Failed to load chart: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    if (staffStatusLabel != null) staffStatusLabel.setText("Chart error: " + e.getMessage());
+                });
             }
         }).start();
     }
@@ -173,22 +260,31 @@ public class AdminDashboardController implements Initializable {
                 var staffList = AdminApiService.getAllStaff();
                 Platform.runLater(() -> staffTable.setItems(FXCollections.observableArrayList(staffList)));
             } catch (Exception e) {
-                Platform.runLater(() -> staffStatusLabel.setText("Failed to load staff: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    if (staffStatusLabel != null) staffStatusLabel.setText("Failed to load staff directory: " + e.getMessage());
+                });
             }
         }).start();
     }
 
     @FXML
     private void handleAddStaff() {
-        String name = staffNameField.getText();
-        String email = staffEmailField.getText();
-        String password = staffPasswordField.getText();
-        String phone = staffPhoneField.getText();
+        String name = staffNameField.getText() != null ? staffNameField.getText().trim() : "";
+        String email = staffEmailField.getText() != null ? staffEmailField.getText().trim() : "";
+        String password = staffPasswordField.getText() != null ? staffPasswordField.getText() : "";
+        String phone = staffPhoneField.getText() != null ? staffPhoneField.getText().trim() : "";
 
         staffStatusLabel.setText("");
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            staffStatusLabel.setText("Name, email, and password are required");
+            staffStatusLabel.setStyle("-fx-text-fill: #D64545; -fx-font-weight: bold;");
+            staffStatusLabel.setText("Name, email, and password are required.");
+            return;
+        }
+
+        if (!phone.isEmpty() && !phone.matches("\\d{10}")) {
+            staffStatusLabel.setStyle("-fx-text-fill: #D64545; -fx-font-weight: bold;");
+            staffStatusLabel.setText("Phone number must be exactly 10 digits.");
             return;
         }
 
@@ -196,7 +292,8 @@ public class AdminDashboardController implements Initializable {
             try {
                 AdminApiService.createStaff(name, email, password, phone);
                 Platform.runLater(() -> {
-                    staffStatusLabel.setText("Staff added successfully");
+                    staffStatusLabel.setStyle("-fx-text-fill: #21865B; -fx-font-weight: bold;");
+                    staffStatusLabel.setText("Staff operator " + name + " added successfully.");
                     staffNameField.clear();
                     staffEmailField.clear();
                     staffPasswordField.clear();
@@ -204,19 +301,24 @@ public class AdminDashboardController implements Initializable {
                     loadStaff();
                 });
             } catch (Exception e) {
-                Platform.runLater(() -> staffStatusLabel.setText("Failed: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    staffStatusLabel.setStyle("-fx-text-fill: #D64545; -fx-font-weight: bold;");
+                    staffStatusLabel.setText("Failed to add staff: " + e.getMessage());
+                });
             }
         }).start();
     }
 
     @FXML
-    private void loadBookings() {
+    public void loadBookings() {
         new Thread(() -> {
             try {
                 var bookings = AdminApiService.getAllBookings();
                 Platform.runLater(() -> allBookings.setAll(bookings));
             } catch (Exception e) {
-                Platform.runLater(() -> staffStatusLabel.setText("Failed to load bookings: " + e.getMessage()));
+                Platform.runLater(() -> {
+                    if (staffStatusLabel != null) staffStatusLabel.setText("Failed to load bookings: " + e.getMessage());
+                });
             }
         }).start();
     }
@@ -227,17 +329,18 @@ public class AdminDashboardController implements Initializable {
 
         var bookings = bookingsTable.getItems();
         if (bookings == null || bookings.isEmpty()) {
-            staffStatusLabel.setText("No bookings to export");
+            staffStatusLabel.setStyle("-fx-text-fill: #D64545; -fx-font-weight: bold;");
+            staffStatusLabel.setText("No bookings available to export.");
             return;
         }
 
         try {
-            String fileName = "Bookings_Export_" + System.currentTimeMillis() + ".csv";
+            String fileName = "Bookings_Audit_" + System.currentTimeMillis() + ".csv";
             String userHome = System.getProperty("user.home");
             String filePath = Paths.get(userHome, "Downloads", fileName).toString();
 
             StringBuilder csv = new StringBuilder();
-            csv.append("Booking ID,Slot,Vehicle,Status,Entry Time,Exit Time,Fare\n");
+            csv.append("Booking ID,Slot,Vehicle Number,Status,Entry Time,Exit Time,Fare\n");
 
             for (BookingApiService.BookingData b : bookings) {
                 csv.append(b.id).append(",")
@@ -245,8 +348,8 @@ public class AdminDashboardController implements Initializable {
                    .append(b.vehicleNumber).append(",")
                    .append(b.status).append(",")
                    .append(b.entryTime != null ? b.entryTime : "").append(",")
-                   .append(b.exitTime != null ? b.exitTime : "").append(",")
-                   .append(b.fare != null ? b.fare : "")
+                   .append(b.exitTime != null ? b.exitTime : (b.expectedExitTime != null ? b.expectedExitTime : "")).append(",")
+                   .append(b.fare != null ? b.fare : (b.estimatedFare != null ? b.estimatedFare : "0"))
                    .append("\n");
             }
 
@@ -254,8 +357,10 @@ public class AdminDashboardController implements Initializable {
                 writer.write(csv.toString());
             }
 
-            staffStatusLabel.setText("Exported " + bookings.size() + " bookings to Downloads: " + fileName);
+            staffStatusLabel.setStyle("-fx-text-fill: #21865B; -fx-font-weight: bold;");
+            staffStatusLabel.setText("Exported " + bookings.size() + " records to Downloads: " + fileName);
         } catch (Exception e) {
+            staffStatusLabel.setStyle("-fx-text-fill: #D64545; -fx-font-weight: bold;");
             staffStatusLabel.setText("Export failed: " + e.getMessage());
         }
     }
@@ -263,6 +368,16 @@ public class AdminDashboardController implements Initializable {
     @FXML
     private void goToDashboard() {
         try { MainApp.switchScene("/fxml/admin_dashboard.fxml"); } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    private void goToProfile() {
+        try { MainApp.switchScene("/fxml/profile.fxml"); } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    private void goToSettings() {
+        try { MainApp.switchScene("/fxml/settings.fxml"); } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML

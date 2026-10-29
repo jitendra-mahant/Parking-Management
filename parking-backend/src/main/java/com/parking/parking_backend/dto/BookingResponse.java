@@ -12,6 +12,8 @@ public class BookingResponse {
     private Double fare;
     private LocalDateTime expectedExitTime;
     private boolean overstay;
+    private boolean upcoming;
+    private Double estimatedFare;
     private Integer rating;
     private String feedback;
 
@@ -38,6 +40,12 @@ public class BookingResponse {
 
     public boolean isOverstay() { return overstay; }
     public void setOverstay(boolean overstay) { this.overstay = overstay; }
+
+    public boolean isUpcoming() { return upcoming; }
+    public void setUpcoming(boolean upcoming) { this.upcoming = upcoming; }
+
+    public Double getEstimatedFare() { return estimatedFare; }
+    public void setEstimatedFare(Double estimatedFare) { this.estimatedFare = estimatedFare; }
 
     public Integer getRating() { return rating; }
     public void setRating(Integer rating) { this.rating = rating; }

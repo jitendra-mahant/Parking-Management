@@ -1,6 +1,8 @@
 package com.parking.client.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +13,12 @@ import com.google.gson.JsonObject;
 public class BookingApiService {
 
     private static final Gson gson = new Gson();
+    private static final DateTimeFormatter API_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-    public static List<SlotData> getAvailableSlots(String vehicleType) throws IOException {
-        String response = ApiClient.get("/bookings/available-slots?vehicleType=" + vehicleType);
+    public static List<SlotData> getAvailableSlots(String vehicleType, LocalDateTime checkIn, LocalDateTime checkOut) throws IOException {
+        String response = ApiClient.get("/bookings/available-slots?vehicleType=" + vehicleType
+                + "&checkIn=" + checkIn.format(API_FMT)
+                + "&checkOut=" + checkOut.format(API_FMT));
         JsonArray array = gson.fromJson(response, JsonArray.class);
 
         List<SlotData> slots = new ArrayList<>();
@@ -28,10 +33,14 @@ public class BookingApiService {
         return slots;
     }
 
-    public static BookingData bookSlot(Long vehicleId, String vehicleType) throws IOException {
+    public static BookingData bookSlot(Long vehicleId, String vehicleType, Long slotId,
+                                        LocalDateTime checkIn, LocalDateTime checkOut) throws IOException {
         JsonObject body = new JsonObject();
         body.addProperty("vehicleId", vehicleId);
         body.addProperty("vehicleType", vehicleType);
+        body.addProperty("slotId", slotId);
+        body.addProperty("checkIn", checkIn.format(API_FMT));
+        body.addProperty("checkOut", checkOut.format(API_FMT));
 
         String response = ApiClient.post("/bookings", gson.toJson(body));
         return parseBooking(gson.fromJson(response, JsonObject.class));
@@ -101,6 +110,8 @@ public class BookingApiService {
                 obj.has("expectedExitTime") && !obj.get("expectedExitTime").isJsonNull() ? obj.get("expectedExitTime").getAsString() : null,
                 obj.has("overstay") && !obj.get("overstay").isJsonNull() && obj.get("overstay").getAsBoolean()
         );
+        data.upcoming = obj.has("upcoming") && !obj.get("upcoming").isJsonNull() && obj.get("upcoming").getAsBoolean();
+        data.estimatedFare = obj.has("estimatedFare") && !obj.get("estimatedFare").isJsonNull() ? obj.get("estimatedFare").getAsDouble() : null;
         data.rating = obj.has("rating") && !obj.get("rating").isJsonNull() ? obj.get("rating").getAsInt() : null;
         data.feedback = obj.has("feedback") && !obj.get("feedback").isJsonNull() ? obj.get("feedback").getAsString() : null;
         return data;
@@ -122,12 +133,14 @@ public class BookingApiService {
         public Long id;
         public String slotNumber;
         public String vehicleNumber;
-        public String entryTime;
-        public String exitTime;
+        public String entryTime;          // check-in
+        public String exitTime;           // actual exit
         public String status;
         public Double fare;
-        public String expectedExitTime;
+        public String expectedExitTime;   // check-out
         public boolean overstay;
+        public boolean upcoming;
+        public Double estimatedFare;
         public Integer rating;
         public String feedback;
 

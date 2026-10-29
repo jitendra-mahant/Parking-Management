@@ -58,4 +58,13 @@ public class AdminController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/revenue-chart")
+    public ResponseEntity<?> getRevenueChart() {
+        try {
+            return ResponseEntity.ok(adminService.getRevenueChart());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

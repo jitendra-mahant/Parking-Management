@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +67,7 @@ public class AdminService {
         userRepository.delete(staff);
     }
 
-        public List<BookingResponse> getAllBookings() {
+    public List<BookingResponse> getAllBookings() {
         return bookingRepository.findAll().stream()
                 .map(b -> {
                     BookingResponse response = new BookingResponse(
@@ -96,5 +99,35 @@ public class AdminService {
                 .sum();
 
         return new RevenueReport(total, active, completed, revenue);
+    }
+
+    public List<Map<String, Object>> getRevenueChart() {
+        List<Booking> allBookings = bookingRepository.findAll();
+        Map<String, Double> dailyMap = new TreeMap<>();
+
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (int i = 6; i >= 0; i--) {
+            dailyMap.put(today.minusDays(i).format(fmt), 0.0);
+        }
+
+        for (Booking b : allBookings) {
+            if ("COMPLETED".equals(b.getStatus()) && b.getFare() != null) {
+                LocalDateTime time = b.getExitTime() != null ? b.getExitTime() : b.getEntryTime();
+                if (time != null) {
+                    String dateKey = time.toLocalDate().format(fmt);
+                    dailyMap.put(dateKey, dailyMap.getOrDefault(dateKey, 0.0) + b.getFare());
+                }
+            }
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map.Entry<String, Double> entry : dailyMap.entrySet()) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("date", entry.getKey());
+            item.put("revenue", entry.getValue());
+            result.add(item);
+        }
+        return result;
     }
 }

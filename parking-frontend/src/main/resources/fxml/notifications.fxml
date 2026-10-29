@@ -7,52 +7,108 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.parking.client.controller.NotificationsController">
 
+    <!-- Sidebar -->
     <left>
         <VBox styleClass="sidebar">
-            <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 18 12;">
-                <Label text="🅿" style="-fx-font-size: 18px; -fx-text-fill: #2563eb;"/>
-                <Label text="ParkEase" style="-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: #1e293b;"/>
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 4 6 18 6;">
+                <HBox styleClass="brand-badge" alignment="CENTER" style="-fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px;">
+                    <SVGPath content="M9 21V5h5a4 4 0 0 1 0 8H9" style="-fx-fill: transparent; -fx-stroke: white; -fx-stroke-width: 2.2; -fx-stroke-line-cap: round; -fx-stroke-line-join: round;"/>
+                </HBox>
+                <VBox spacing="1">
+                    <Label text="ParkEase" styleClass="sidebar-brand"/>
+                    <Label text="CUSTOMER PORTAL" styleClass="sidebar-brand-sub"/>
+                </VBox>
             </HBox>
-            <Button text="🏠  Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="👤  My Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="🚗  My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="🅿️  Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="📋  My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="💳  Payments" onAction="#goToPayment" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="🔔  Notifications" onAction="#goToNotifications" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity"/>
-            <Button text="⚙️  Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button text="🚪  Logout" onAction="#handleLogout" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity"/>
+
+            <Button text="Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M3 3h7v9H3zm11 0h7v5h-7zm0 9h7v9h-7zM3 16h7v5H3z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="Book Parking Slot" onAction="#goToBookSlot" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M9 21V5h5a4 4 0 0 1 0 8H9" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="My Bookings" onAction="#goToMyBookings" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-7 0V2m-6 2V2m-2 7h18" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="My Vehicles" onAction="#goToVehicles" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M5 17h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2l-2-4H9L7 7H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2zm1 0v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-2zm10 0v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-2z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="Payments" onAction="#goToPayment" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M2 7h20M2 11h20M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="Notifications" onAction="#goToNotifications" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="My Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="Settings" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="Sign Out" onAction="#handleLogout" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
         </VBox>
     </left>
 
+    <!-- Center Content -->
     <center>
         <VBox alignment="TOP_LEFT" spacing="20" styleClass="content-area">
             <padding>
-                <Insets top="24" right="30" bottom="24" left="30"/>
+                <Insets top="20" right="28" bottom="24" left="28"/>
             </padding>
 
-            <Label styleClass="topbar-title" text="Notifications"/>
-            <Label styleClass="topbar-subtitle" text="Booking confirmations, updates, and alerts"/>
+            <!-- Topbar -->
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+                <VBox spacing="3">
+                    <Label styleClass="topbar-title" text="Notifications &amp; Activity Alerts"/>
+                    <Label styleClass="topbar-subtitle" text="Real-time alerts for booking confirmations, slot check-outs, and reminders"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Refresh Alerts" onAction="#loadNotifications" styleClass="btn-secondary" style="-fx-font-size: 12px; -fx-padding: 7 14 7 14;"/>
+            </HBox>
 
-            <VBox styleClass="panel-card" spacing="12">
-                <TableView fx:id="notifTable" prefHeight="400">
+            <VBox styleClass="panel-card" spacing="14">
+                <TableView fx:id="notifTable" prefHeight="420">
                     <columns>
-                        <TableColumn fx:id="colStatus" text="" prefWidth="40"/>
-                        <TableColumn fx:id="colMessage" text="Message" prefWidth="380"/>
-                        <TableColumn fx:id="colTime" text="Received" prefWidth="160"/>
-                        <TableColumn fx:id="colNotifAction" text="" prefWidth="110"/>
+                        <TableColumn fx:id="colStatus" text="" prefWidth="45"/>
+                        <TableColumn fx:id="colMessage" text="Notification Message" prefWidth="480"/>
+                        <TableColumn fx:id="colTime" text="Received" prefWidth="180"/>
+                        <TableColumn fx:id="colNotifAction" text="Action" prefWidth="110"/>
                     </columns>
                     <placeholder>
-                        <Label text="No notifications yet"/>
+                        <Label text="No notifications yet. You will receive alerts when bookings update." style="-fx-text-fill: #64748B; -fx-font-size: 12.5px;"/>
                     </placeholder>
                 </TableView>
-                <Button text="Refresh" onAction="#loadNotifications"/>
-                <Label fx:id="statusLabel" text=""/>
+
+                <Label fx:id="statusLabel" text="" style="-fx-font-size: 12px;"/>
             </VBox>
 
         </VBox>

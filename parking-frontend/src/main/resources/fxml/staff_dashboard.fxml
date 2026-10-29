@@ -11,98 +11,213 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.parking.client.controller.StaffDashboardController">
 
+    <!-- Staff Sidebar -->
     <left>
         <VBox styleClass="sidebar">
-            <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 0 0 18 12;">
-                <Label text="🅿" style="-fx-font-size: 18px; -fx-text-fill: #d97706;"/>
-                <Label text="ParkEase" style="-fx-font-size: 17px; -fx-font-weight: 800; -fx-text-fill: #1e293b;"/>
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 4 6 18 6;">
+                <HBox styleClass="brand-badge" alignment="CENTER" style="-fx-min-width: 38px; -fx-min-height: 38px; -fx-max-width: 38px; -fx-max-height: 38px; -fx-background-color: #D99116;">
+                    <SVGPath content="M9 21V5h5a4 4 0 0 1 0 8H9" style="-fx-fill: transparent; -fx-stroke: white; -fx-stroke-width: 2.2; -fx-stroke-line-cap: round; -fx-stroke-line-join: round;"/>
+                </HBox>
+                <VBox spacing="1">
+                    <Label text="ParkEase" styleClass="sidebar-brand"/>
+                    <Label text="OPERATOR CENTER" styleClass="sidebar-brand-sub"/>
+                </VBox>
             </HBox>
-            <Button text="🏠  Dashboard" onAction="#goToDashboard" styleClass="sidebar-btn, sidebar-btn-staff-active" maxWidth="Infinity"/>
-            <Button text="🚪  Logout" onAction="#handleLogout" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity"/>
+
+            <Button text="Operations Console" onAction="#goToDashboard" styleClass="sidebar-btn, sidebar-btn-active" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M3 3h7v9H3zm11 0h7v5h-7zm0 9h7v9h-7zM3 16h7v5H3z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="Operator Profile" onAction="#goToProfile" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+            <Button text="Preferences" onAction="#goToSettings" styleClass="sidebar-btn" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- Current Staff Profile Card -->
+            <HBox styleClass="sidebar-user-card" alignment="CENTER_LEFT" spacing="10">
+                <HBox styleClass="avatar-circle, avatar-staff" style="-fx-min-width: 34px; -fx-min-height: 34px; -fx-max-width: 34px; -fx-max-height: 34px;">
+                    <Label fx:id="avatarLabel" text="S" style="-fx-font-size: 13px; -fx-font-weight: 800; -fx-text-fill: white;"/>
+                </HBox>
+                <VBox spacing="1">
+                    <Label fx:id="sidebarUserName" text="Operator" style="-fx-text-fill: white; -fx-font-weight: 700; -fx-font-size: 12px;"/>
+                    <Label fx:id="sidebarUserRole" text="STAFF OPERATOR" style="-fx-text-fill: #D99116; -fx-font-weight: 800; -fx-font-size: 9.5px;"/>
+                </VBox>
+            </HBox>
+
+            <Button text="Sign Out" onAction="#handleLogout" styleClass="sidebar-btn, sidebar-btn-logout" maxWidth="Infinity">
+                <graphic>
+                    <SVGPath content="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9" styleClass="sidebar-icon"/>
+                </graphic>
+            </Button>
         </VBox>
     </left>
 
+    <!-- Center Content -->
     <center>
         <VBox alignment="TOP_LEFT" spacing="20" styleClass="content-area">
             <padding>
-                <Insets top="24" right="30" bottom="24" left="30"/>
+                <Insets top="20" right="28" bottom="24" left="28"/>
             </padding>
 
-            <HBox styleClass="topbar">
-                <HBox styleClass="avatar-circle, avatar-staff">
-                    <Label fx:id="avatarLabel" text="S"/>
-                </HBox>
-                <VBox spacing="4">
-                    <Label fx:id="welcomeLabel" styleClass="topbar-title" text="Staff Dashboard"/>
-                    <Label styleClass="topbar-subtitle" text="Sunrise Parking Complex - 24 Slots"/>
+            <!-- Topbar -->
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+                <VBox spacing="3">
+                    <Label fx:id="welcomeLabel" styleClass="topbar-title" text="Operations Dashboard"/>
+                    <Label styleClass="topbar-subtitle" text="Sunrise Parking Complex | 24 Active Slots Monitoring"/>
                 </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
+                <HBox styleClass="live-pill" alignment="CENTER">
+                    <Label text="● Live Monitoring Active"/>
+                </HBox>
+                <Button text="Refresh Data" onAction="#refreshAll" styleClass="btn-secondary" style="-fx-font-size: 12px; -fx-padding: 7 14 7 14;"/>
                 <HBox styleClass="role-chip, chip-staff">
-                    <Label text="STAFF"/>
+                    <Label text="OPERATOR"/>
                 </HBox>
             </HBox>
 
+            <!-- 6 KPI Metrics -->
             <HBox styleClass="stats-row">
-                <VBox styleClass="stat-card">
-                    <Label fx:id="totalSlotsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="TOTAL SLOTS"/>
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="stat-label" text="TOTAL SLOTS"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <SVGPath content="M9 21V5h5a4 4 0 0 1 0 8H9" style="-fx-fill: #14213D;"/>
+                    </HBox>
+                    <Label fx:id="totalSlotsLabel" styleClass="stat-number" text="24"/>
+                    <Label styleClass="stat-subtext" text="Capacity across all zones"/>
                 </VBox>
-                <VBox styleClass="stat-card">
-                    <Label fx:id="occupiedSlotsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="OCCUPIED"/>
+
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="stat-label" text="OCCUPIED"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <SVGPath content="M5 17h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2l-2-4H9L7 7H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2z" style="-fx-fill: #D64545;"/>
+                    </HBox>
+                    <Label fx:id="occupiedSlotsLabel" styleClass="stat-number" text="0" style="-fx-text-fill: #D64545;"/>
+                    <Label styleClass="stat-subtext" text="Vehicles currently parked"/>
                 </VBox>
-                <VBox styleClass="stat-card">
-                    <Label fx:id="availableSlotsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="AVAILABLE"/>
+
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="stat-label" text="AVAILABLE"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <SVGPath content="M20 6L9 17l-5-5" style="-fx-fill: #21865B;"/>
+                    </HBox>
+                    <Label fx:id="availableSlotsLabel" styleClass="stat-number" text="0" style="-fx-text-fill: #21865B;"/>
+                    <Label styleClass="stat-subtext" text="Ready for new arrivals"/>
                 </VBox>
-                <VBox styleClass="stat-card">
+
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="stat-label" text="TODAY ENTRIES"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <SVGPath content="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zm0-15v5l3 3" style="-fx-fill: #0F9D8A;"/>
+                    </HBox>
                     <Label fx:id="todayEntriesLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="TODAY ENTRIES"/>
+                    <Label styleClass="stat-subtext" text="Total vehicles checked-in"/>
                 </VBox>
-                <VBox styleClass="stat-card">
+
+                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="stat-label" text="TODAY EXITS"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <SVGPath content="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9" style="-fx-fill: #64748B;"/>
+                    </HBox>
                     <Label fx:id="todayExitsLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="TODAY EXITS"/>
+                    <Label styleClass="stat-subtext" text="Total sessions checked-out"/>
                 </VBox>
-                <VBox styleClass="stat-card, stat-card-alert">
+
+                <VBox styleClass="stat-card, stat-card-alert" HBox.hgrow="ALWAYS">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label styleClass="stat-label" text="OVERSTAY ALERTS" style="-fx-text-fill: #D64545;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <SVGPath content="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" style="-fx-fill: #D64545;"/>
+                    </HBox>
                     <Label fx:id="overstayLabel" styleClass="stat-number" text="0"/>
-                    <Label styleClass="stat-label" text="OVERSTAYED"/>
+                    <Label styleClass="stat-subtext" text="Vehicles past check-out time"/>
                 </VBox>
             </HBox>
 
-            <VBox styleClass="panel-card" spacing="12">
-                <Label styleClass="panel-title" text="Live Parking Layout"/>
-                <VBox fx:id="slotGridPane" spacing="16"/>
+            <!-- Visual Parking Slot Layout Card with Filter Controls -->
+            <VBox styleClass="panel-card" spacing="14">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <VBox spacing="2">
+                        <Label styleClass="panel-title" text="Interactive Facility Parking Map"/>
+                        <Label styleClass="topbar-subtitle" text="Click any slot to highlight details. Color key: Green = Free, Red = Occupied."/>
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <HBox spacing="8" alignment="CENTER_RIGHT">
+                        <Label text="Zone:" style="-fx-font-size: 11.5px; -fx-font-weight: 700; -fx-text-fill: #64748B;"/>
+                        <ComboBox fx:id="zoneFilterCombo" prefWidth="120" style="-fx-font-size: 11.5px;"/>
+                        <Label text="Status:" style="-fx-font-size: 11.5px; -fx-font-weight: 700; -fx-text-fill: #64748B;"/>
+                        <ComboBox fx:id="statusFilterCombo" prefWidth="130" style="-fx-font-size: 11.5px;"/>
+                    </HBox>
+                </HBox>
+
+                <!-- Dynamic Zone Rows populated by Controller -->
+                <VBox fx:id="slotGridPane" spacing="14"/>
             </VBox>
 
-            <HBox spacing="20">
-                <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
-                    <Label styleClass="panel-title" text="Vehicle Entry"/>
-                    <TextField fx:id="entryVehicleNumberField" promptText="Vehicle Number" maxWidth="Infinity"/>
-                    <ComboBox fx:id="entryVehicleTypeCombo" promptText="Vehicle Type" maxWidth="Infinity"/>
-                    <Button text="Record Entry" onAction="#handleRecordEntry" styleClass="staff-btn"/>
-                    <Label fx:id="entryStatusLabel" text=""/>
+            <!-- Lower Section: Vehicle Fast Entry + Active Bookings Table -->
+            <HBox spacing="18">
+                <!-- Vehicle Fast Entry Card -->
+                <VBox styleClass="panel-card" spacing="12" prefWidth="380">
+                    <Label styleClass="panel-title" text="Walk-In Vehicle Entry"/>
+                    <Label styleClass="topbar-subtitle" text="Assigns next free slot in selected zone immediately."/>
+
+                    <VBox spacing="5">
+                        <Label text="VEHICLE PLATE NUMBER" styleClass="auth-field-label"/>
+                        <TextField fx:id="entryVehicleNumberField" promptText="e.g. MH12AB1234" maxWidth="Infinity" style="-fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="VEHICLE CATEGORY" styleClass="auth-field-label"/>
+                        <ComboBox fx:id="entryVehicleTypeCombo" promptText="Select category" maxWidth="Infinity"/>
+                    </VBox>
+
+                    <Button text="Record Entry &amp; Assign Slot" onAction="#handleRecordEntry" styleClass="staff-btn" maxWidth="Infinity" style="-fx-background-color: #D99116; -fx-pref-height: 38px;"/>
+                    <Label fx:id="entryStatusLabel" text="" wrapText="true" style="-fx-font-size: 11.5px;"/>
                 </VBox>
 
+                <!-- Active Bookings & Exit Management Table -->
                 <VBox styleClass="panel-card" spacing="10" HBox.hgrow="ALWAYS">
-                    <Label styleClass="panel-title" text="Active Bookings"/>
-                    <TableView fx:id="activeBookingsTable" prefHeight="200">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <VBox spacing="2">
+                            <Label styleClass="panel-title" text="Active Parking Sessions"/>
+                            <Label styleClass="topbar-subtitle" text="Monitor parked vehicles and process exit check-outs"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <TextField fx:id="activeBookingSearchField" promptText="Search vehicle or slot..." prefWidth="200" style="-fx-font-size: 12px;"/>
+                    </HBox>
+
+                    <TableView fx:id="activeBookingsTable" prefHeight="230">
                         <columns>
-                            <TableColumn fx:id="colStaffSlot" text="Slot" prefWidth="60"/>
-                            <TableColumn fx:id="colStaffVehicle" text="Vehicle" prefWidth="100"/>
-                            <TableColumn fx:id="colStaffEntry" text="Entry Time" prefWidth="120"/>
-                            <TableColumn fx:id="colStaffStatus" text="Status" prefWidth="90"/>
-                            <TableColumn fx:id="colStaffAction" text="" prefWidth="80"/>
+                            <TableColumn fx:id="colStaffSlot" text="Slot" prefWidth="70"/>
+                            <TableColumn fx:id="colStaffVehicle" text="Vehicle Number" prefWidth="130"/>
+                            <TableColumn fx:id="colStaffEntry" text="Entry Time" prefWidth="140"/>
+                            <TableColumn fx:id="colStaffStatus" text="Status" prefWidth="105"/>
+                            <TableColumn fx:id="colStaffAction" text="Action" prefWidth="120"/>
                         </columns>
                         <placeholder>
-                            <Label text="No active bookings right now"/>
+                            <Label text="No active parking sessions in the facility" style="-fx-text-fill: #64748B; -fx-font-size: 12px;"/>
                         </placeholder>
                     </TableView>
-                    <Button text="Refresh All" onAction="#refreshAll" styleClass="staff-btn"/>
-                    <Label fx:id="exitStatusLabel" text=""/>
+
+                    <Label fx:id="exitStatusLabel" text="" wrapText="true" style="-fx-font-size: 12px;"/>
                 </VBox>
             </HBox>
 

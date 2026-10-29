@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface SlotRepository extends JpaRepository<Slot, Long> {
     List<Slot> findByVehicleTypeAndOccupiedFalse(String vehicleType);
+    List<Slot> findByVehicleType(String vehicleType);
 }

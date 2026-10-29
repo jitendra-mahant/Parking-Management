@@ -4,12 +4,17 @@ import com.parking.parking_backend.dto.BookSlotRequest;
 import com.parking.parking_backend.dto.BookingResponse;
 import com.parking.parking_backend.model.*;
 import com.parking.parking_backend.repository.*;
+import com.parking.parking_backend.util.BookingMapper;
+import com.parking.parking_backend.util.FareCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.parking.parking_backend.util.PricingConfig;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,11 +35,18 @@ public class BookingService {
     @Autowired
     private NotificationService notificationService;
 
-    public List<Slot> getAvailableSlots(String vehicleType) {
-        return slotRepository.findByVehicleTypeAndOccupiedFalse(vehicleType);
+    @Autowired
+    private SlotAvailabilityService availabilityService;
+
+    private static final DateTimeFormatter DISPLAY = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+
+    public List<Slot> getAvailableSlots(String vehicleType, LocalDateTime checkIn, LocalDateTime checkOut) {
+        validateWindow(checkIn, checkOut);
+        return availabilityService.findFreeSlots(vehicleType, checkIn, checkOut);
     }
 
-    public BookingResponse bookSlot(String email, BookSlotRequest request) {
+    // synchronized so two simultaneous requests cannot take the same slot
+    public synchronized BookingResponse bookSlot(String email, BookSlotRequest request) {
         User customer = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -45,34 +57,56 @@ public class BookingService {
             throw new RuntimeException("This vehicle does not belong to you");
         }
 
-        List<Slot> availableSlots = slotRepository.findByVehicleTypeAndOccupiedFalse(request.getVehicleType());
+        LocalDateTime checkIn = request.getCheckIn();
+        LocalDateTime checkOut = request.getCheckOut();
+        validateWindow(checkIn, checkOut);
 
-        if (availableSlots.isEmpty()) {
-            throw new RuntimeException("No available slots for " + request.getVehicleType());
+        if (!availabilityService.isVehicleFree(vehicle.getId(), checkIn, checkOut, null)) {
+            throw new RuntimeException("This vehicle already has a booking during the selected time");
         }
 
-        Slot slot = availableSlots.get(0); // pick the first available slot
-        slot.setOccupied(true);
-        slotRepository.save(slot);
+        Slot slot;
+        if (request.getSlotId() != null) {
+            slot = slotRepository.findById(request.getSlotId())
+                    .orElseThrow(() -> new RuntimeException("Slot not found"));
+
+            if (!slot.getVehicleType().equals(vehicle.getVehicleType())) {
+                throw new RuntimeException("Slot " + slot.getSlotNumber() + " is not for " + vehicle.getVehicleType() + " vehicles");
+            }
+            if (!availabilityService.isSlotFree(slot.getId(), checkIn, checkOut, null)) {
+                throw new RuntimeException("Slot " + slot.getSlotNumber() + " is already booked for the selected time. Please choose another slot.");
+            }
+        } else {
+            List<Slot> free = availabilityService.findFreeSlots(vehicle.getVehicleType(), checkIn, checkOut);
+            if (free.isEmpty()) {
+                throw new RuntimeException("No available slots for " + vehicle.getVehicleType() + " in the selected time");
+            }
+            slot = free.get(0);
+        }
+
+        double estimated = FareCalculator.estimate(vehicle.getVehicleType(), checkIn, checkOut);
 
         Booking booking = new Booking();
         booking.setCustomer(customer);
         booking.setVehicle(vehicle);
         booking.setSlot(slot);
-        booking.setEntryTime(LocalDateTime.now());
+        booking.setEntryTime(checkIn);
+        booking.setExpectedExitTime(checkOut);
+        booking.setEstimatedFare(estimated);
         booking.setStatus("ACTIVE");
-
         bookingRepository.save(booking);
 
         notificationService.createNotification(customer,
-                "Your booking for slot " + slot.getSlotNumber() + " is confirmed.");
+                "Your booking for slot " + slot.getSlotNumber() + " is confirmed from "
+                        + checkIn.format(DISPLAY) + " to " + checkOut.format(DISPLAY)
+                        + ". Estimated fare: ₹" + String.format("%.2f", estimated));
 
-        return toResponse(booking);
+        return BookingMapper.toResponse(booking);
     }
 
     public List<BookingResponse> getMyBookings(String email) {
         return bookingRepository.findByCustomerEmailOrderByEntryTimeDesc(email).stream()
-                .map(this::toResponse)
+                .map(BookingMapper::toResponse)
                 .collect(Collectors.toList());
     }
 
@@ -84,23 +118,18 @@ public class BookingService {
             throw new RuntimeException("You are not authorized to cancel this booking");
         }
 
-        if (!booking.getStatus().equals("ACTIVE")) {
+        if (!"ACTIVE".equals(booking.getStatus())) {
             throw new RuntimeException("Only active bookings can be cancelled");
         }
 
         booking.setStatus("CANCELLED");
         booking.setExitTime(LocalDateTime.now());
-
-        Slot slot = booking.getSlot();
-        slot.setOccupied(false);
-        slotRepository.save(slot);
-
         bookingRepository.save(booking);
 
         notificationService.createNotification(booking.getCustomer(),
                 "Your booking for slot " + booking.getSlot().getSlotNumber() + " was cancelled.");
 
-        return toResponse(booking);
+        return BookingMapper.toResponse(booking);
     }
 
     public BookingResponse completeBooking(String email, Long bookingId) {
@@ -111,66 +140,62 @@ public class BookingService {
             throw new RuntimeException("You are not authorized to complete this booking");
         }
 
-        if (!booking.getStatus().equals("ACTIVE")) {
+        if (!"ACTIVE".equals(booking.getStatus())) {
             throw new RuntimeException("Only active bookings can be completed");
         }
 
-                LocalDateTime exitTime = LocalDateTime.now();
-        long minutes = Duration.between(booking.getEntryTime(), exitTime).toMinutes();
-        double hours = Math.max(1, Math.ceil(minutes / 60.0)); // minimum 1 hour charge
-        double rate = PricingConfig.getRateForType(booking.getVehicle().getVehicleType());
-        double fare = hours * rate;
+        LocalDateTime now = LocalDateTime.now();
+        if (booking.getEntryTime().isAfter(now)) {
+            throw new RuntimeException("Check-in time (" + booking.getEntryTime().format(DISPLAY)
+                    + ") has not started yet. You can cancel this booking instead.");
+        }
 
-        booking.setExitTime(exitTime);
+        double fare = FareCalculator.finalFare(booking, now);
+
+        booking.setExitTime(now);
         booking.setStatus("COMPLETED");
         booking.setFare(fare);
-
-        Slot slot = booking.getSlot();
-        slot.setOccupied(false);
-        slotRepository.save(slot);
-
         bookingRepository.save(booking);
 
         notificationService.createNotification(booking.getCustomer(),
                 "Your booking for slot " + booking.getSlot().getSlotNumber() + " is complete. Fare: ₹" + fare);
 
-        return toResponse(booking);
+        return BookingMapper.toResponse(booking);
     }
 
-        private BookingResponse toResponse(Booking booking) {
-        BookingResponse response = new BookingResponse(
-                booking.getId(),
-                booking.getSlot().getSlotNumber(),
-                booking.getVehicle().getVehicleNumber(),
-                booking.getEntryTime(),
-                booking.getExitTime(),
-                booking.getStatus(),
-                booking.getFare(),
-                booking.getExpectedExitTime()
-        );
-        response.setRating(booking.getRating());
-        response.setFeedback(booking.getFeedback());
-        return response;
+    public synchronized BookingResponse extendBooking(String email, Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        if (!booking.getCustomer().getEmail().equals(email)) {
+            throw new RuntimeException("You are not authorized to extend this booking");
+        }
+
+        if (!"ACTIVE".equals(booking.getStatus())) {
+            throw new RuntimeException("Only active bookings can be extended");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime currentEnd = booking.getExpectedExitTime() != null
+                ? booking.getExpectedExitTime() : booking.getEntryTime().plusHours(2);
+        LocalDateTime base = currentEnd.isBefore(now) ? now : currentEnd;
+        LocalDateTime newEnd = base.plusHours(1);
+
+        if (!availabilityService.isSlotFree(booking.getSlot().getId(), base, newEnd, booking.getId())) {
+            throw new RuntimeException("Cannot extend: this slot is reserved by another booking right after your check-out");
+        }
+
+        booking.setExpectedExitTime(newEnd);
+        if (booking.getEstimatedFare() != null) {
+            booking.setEstimatedFare(FareCalculator.estimate(
+                    booking.getVehicle().getVehicleType(), booking.getEntryTime(), newEnd));
+        }
+        bookingRepository.save(booking);
+
+        return BookingMapper.toResponse(booking);
     }
 
-    public java.util.Map<String, Object> getMyStats(String email) {
-        List<Booking> myBookings = bookingRepository.findByCustomerEmailOrderByEntryTimeDesc(email);
-
-        long totalBookings = myBookings.size();
-        long activeBookings = myBookings.stream().filter(b -> b.getStatus().equals("ACTIVE")).count();
-        double totalSpent = myBookings.stream()
-                .filter(b -> b.getFare() != null)
-                .mapToDouble(Booking::getFare)
-                .sum();
-
-        java.util.Map<String, Object> stats = new java.util.HashMap<>();
-        stats.put("totalBookings", totalBookings);
-        stats.put("activeBookings", activeBookings);
-        stats.put("totalSpent", totalSpent);
-        return stats;
-    }
-
-        public BookingResponse rateBooking(String email, Long bookingId, Integer rating, String feedback) {
+    public BookingResponse rateBooking(String email, Long bookingId, Integer rating, String feedback) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
@@ -178,7 +203,7 @@ public class BookingService {
             throw new RuntimeException("You are not authorized to rate this booking");
         }
 
-        if (!booking.getStatus().equals("COMPLETED")) {
+        if (!"COMPLETED".equals(booking.getStatus())) {
             throw new RuntimeException("Only completed bookings can be rated");
         }
 
@@ -190,6 +215,49 @@ public class BookingService {
         booking.setFeedback(feedback);
         bookingRepository.save(booking);
 
-        return toResponse(booking);
+        return BookingMapper.toResponse(booking);
+    }
+
+    public Map<String, Object> getMyStats(String email) {
+        List<Booking> myBookings = bookingRepository.findByCustomerEmailOrderByEntryTimeDesc(email);
+
+        long totalBookings = myBookings.size();
+        long activeBookings = myBookings.stream().filter(b -> "ACTIVE".equals(b.getStatus())).count();
+        double totalSpent = myBookings.stream()
+                .filter(b -> b.getFare() != null)
+                .mapToDouble(Booking::getFare)
+                .sum();
+
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalBookings", totalBookings);
+        stats.put("activeBookings", activeBookings);
+        stats.put("totalSpent", totalSpent);
+        return stats;
+    }
+
+    private void validateWindow(LocalDateTime checkIn, LocalDateTime checkOut) {
+        if (checkIn == null || checkOut == null) {
+            throw new RuntimeException("Check-in and check-out date and time are required");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (checkIn.isBefore(now.minusMinutes(5))) {
+            throw new RuntimeException("Check-in time cannot be in the past");
+        }
+        if (!checkOut.isAfter(checkIn)) {
+            throw new RuntimeException("Check-out must be after check-in");
+        }
+
+        long minutes = Duration.between(checkIn, checkOut).toMinutes();
+        if (minutes < 60) {
+            throw new RuntimeException("Minimum booking duration is 1 hour");
+        }
+        if (minutes > 7 * 24 * 60) {
+            throw new RuntimeException("Maximum booking duration is 7 days");
+        }
+        if (checkIn.isAfter(now.plusDays(30))) {
+            throw new RuntimeException("Bookings can be made at most 30 days in advance");
+        }
     }
 }

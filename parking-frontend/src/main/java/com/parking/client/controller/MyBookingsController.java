@@ -28,8 +28,10 @@ public class MyBookingsController implements Initializable {
     @FXML private TableView<BookingApiService.BookingData> activeTable;
     @FXML private TableColumn<BookingApiService.BookingData, String> colActiveSlot;
     @FXML private TableColumn<BookingApiService.BookingData, String> colActiveVehicle;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveEntry;
-    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveExpected;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveCheckIn;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveCheckOut;
+    @FXML private TableColumn<BookingApiService.BookingData, Void> colActiveStatus;
+    @FXML private TableColumn<BookingApiService.BookingData, String> colActiveFare;
     @FXML private TableColumn<BookingApiService.BookingData, Void> colActiveAction;
 
     @FXML private TextField historySearchField;
@@ -50,8 +52,11 @@ public class MyBookingsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         colActiveSlot.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().slotNumber));
         colActiveVehicle.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().vehicleNumber));
-        colActiveEntry.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(d.getValue().entryTime)));
-        colActiveExpected.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(d.getValue().expectedExitTime)));
+        colActiveCheckIn.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(d.getValue().entryTime)));
+        colActiveCheckOut.setCellValueFactory(d -> new SimpleStringProperty(formatDateTime(d.getValue().expectedExitTime)));
+        colActiveFare.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().estimatedFare != null ? "₹" + String.format("%.0f", d.getValue().estimatedFare) : "-"));
+        addActiveStatusColumn();
         addActiveActionButtons();
 
         colHistSlot.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().slotNumber));
@@ -88,6 +93,32 @@ public class MyBookingsController implements Initializable {
         return sb.toString();
     }
 
+    private void addActiveStatusColumn() {
+        colActiveStatus.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
+                    setGraphic(null);
+                    return;
+                }
+                BookingApiService.BookingData b = getTableView().getItems().get(getIndex());
+                Label badge;
+                if (b.upcoming) {
+                    badge = new Label("Upcoming");
+                    badge.getStyleClass().add("status-badge-upcoming");
+                } else if (b.overstay) {
+                    badge = new Label("Overstay");
+                    badge.getStyleClass().add("status-badge-overstay");
+                } else {
+                    badge = new Label("Active");
+                    badge.getStyleClass().add("status-badge-ontime");
+                }
+                setGraphic(badge);
+            }
+        });
+    }
+
     private void addActiveActionButtons() {
         colActiveAction.setCellFactory(new Callback<>() {
             @Override
@@ -122,7 +153,15 @@ public class MyBookingsController implements Initializable {
                     @Override
                     protected void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
-                        setGraphic(empty ? null : box);
+                        if (empty || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
+                            setGraphic(null);
+                            return;
+                        }
+                        BookingApiService.BookingData b = getTableView().getItems().get(getIndex());
+                        // an upcoming booking cannot be completed before its check-in time
+                        completeBtn.setVisible(!b.upcoming);
+                        completeBtn.setManaged(!b.upcoming);
+                        setGraphic(box);
                     }
                 };
             }
@@ -206,7 +245,7 @@ public class MyBookingsController implements Initializable {
                 BookingApiService.extendBooking(booking.id);
                 Platform.runLater(() -> {
                     loadBookings();
-                    successLabel.setText("Booking extended by 1 hour");
+                    successLabel.setText("Check-out extended by 1 hour");
                 });
             } catch (Exception e) {
                 Platform.runLater(() -> errorLabel.setText("Failed: " + e.getMessage()));
@@ -316,10 +355,12 @@ public class MyBookingsController implements Initializable {
                     "Customer: " + SessionManager.getName() + "\n" +
                     "Vehicle: " + b.vehicleNumber + "\n" +
                     "Slot: " + b.slotNumber + "\n" +
-                    "Entry Time: " + b.entryTime + "\n" +
-                    "Exit Time: " + (b.exitTime != null ? b.exitTime : "N/A") + "\n" +
+                    "Check-in (booked): " + formatDateTime(b.entryTime) + "\n" +
+                    "Check-out (booked): " + formatDateTime(b.expectedExitTime) + "\n" +
+                    "Actual exit: " + (b.exitTime != null ? formatDateTime(b.exitTime) : "N/A") + "\n" +
                     "Status: " + b.status + "\n" +
-                    "Fare: " + (b.fare != null ? "₹" + b.fare : "N/A") + "\n" +
+                    "Estimated fare: " + (b.estimatedFare != null ? "₹" + b.estimatedFare : "N/A") + "\n" +
+                    "Final fare: " + (b.fare != null ? "₹" + b.fare : "N/A") + "\n" +
                     "=====================================\n" +
                     "Thank you for using our parking service!";
 

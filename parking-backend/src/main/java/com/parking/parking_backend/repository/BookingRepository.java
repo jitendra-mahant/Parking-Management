@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByCustomerEmailOrderByEntryTimeDesc(String email);
+    List<Booking> findByStatus(String status);
 }

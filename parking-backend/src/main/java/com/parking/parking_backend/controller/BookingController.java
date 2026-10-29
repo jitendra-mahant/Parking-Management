@@ -1,11 +1,17 @@
 package com.parking.parking_backend.controller;
 
 import com.parking.parking_backend.dto.BookSlotRequest;
+import com.parking.parking_backend.dto.RateBookingRequest;
 import com.parking.parking_backend.service.BookingService;
+import com.parking.parking_backend.util.PricingConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -15,9 +21,12 @@ public class BookingController {
     private BookingService bookingService;
 
     @GetMapping("/available-slots")
-    public ResponseEntity<?> getAvailableSlots(@RequestParam String vehicleType) {
+    public ResponseEntity<?> getAvailableSlots(
+            @RequestParam String vehicleType,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkIn,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime checkOut) {
         try {
-            return ResponseEntity.ok(bookingService.getAvailableSlots(vehicleType));
+            return ResponseEntity.ok(bookingService.getAvailableSlots(vehicleType, checkIn, checkOut));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -59,6 +68,26 @@ public class BookingController {
         }
     }
 
+    @PutMapping("/{id}/extend")
+    public ResponseEntity<?> extendBooking(Authentication authentication, @PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(bookingService.extendBooking(authentication.getName(), id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/rate")
+    public ResponseEntity<?> rateBooking(Authentication authentication, @PathVariable Long id,
+                                          @RequestBody RateBookingRequest request) {
+        try {
+            return ResponseEntity.ok(bookingService.rateBooking(
+                    authentication.getName(), id, request.getRating(), request.getFeedback()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping("/my-stats")
     public ResponseEntity<?> getMyStats(Authentication authentication) {
         try {
@@ -70,17 +99,8 @@ public class BookingController {
 
     @GetMapping("/rate")
     public ResponseEntity<?> getRate(@RequestParam String vehicleType) {
-        return ResponseEntity.ok(java.util.Map.of("vehicleType", vehicleType,
-                "ratePerHour", com.parking.parking_backend.util.PricingConfig.getRateForType(vehicleType)));
-    }
-
-        @PutMapping("/{id}/rate")
-    public ResponseEntity<?> rateBooking(Authentication authentication, @PathVariable Long id,
-                                          @RequestBody com.parking.parking_backend.dto.RateBookingRequest request) {
-        try {
-            return ResponseEntity.ok(bookingService.rateBooking(authentication.getName(), id, request.getRating(), request.getFeedback()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(Map.of(
+                "vehicleType", vehicleType,
+                "ratePerHour", PricingConfig.getRateForType(vehicleType)));
     }
 }
